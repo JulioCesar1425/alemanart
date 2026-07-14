@@ -1,0 +1,51 @@
+---
+import paquetes from '../data/paquetes.json';
+import media from '../data/testimonios.json';
+---
+
+<section id="video" class="brand-wash scroll-mt-20 py-16 md:py-24">
+  <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 md:grid-cols-2">
+    <div>
+      <h2 class="section-title text-3xl sm:text-4xl">Servicio de video</h2>
+      <p class="mt-3 max-w-md text-tinta-suave">
+        Además de fotografía, ofrecemos producción de video profesional para eventos, marcas
+        y negocios.
+      </p>
+      <ul class="mt-7 space-y-3.5">
+        {
+          paquetes.video.map((v) => (
+            <li class="flex items-center gap-3 text-tinta-suave">
+              <svg
+                class="h-5 w-5 shrink-0 text-coral"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              {v}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      {
+        media.videos.map((v) => (
+          <div class="overflow-hidden rounded-2xl border border-tinta/10 bg-tinta shadow-lg">
+            <iframe
+              src={`https://player.vimeo.com/video/${v.id}?title=0&byline=0&portrait=0&dnt=1`}
+              title={v.titulo}
+              class="aspect-[9/16] w-full"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="fullscreen; picture-in-picture; encrypted-media"
+              allowfullscreen
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

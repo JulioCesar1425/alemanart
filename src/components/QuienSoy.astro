@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import foto1 from '../assets/marca/fatima-01.jpg';
+import foto2 from '../assets/marca/fatima-02.jpg';
+import foto3 from '../assets/marca/fatima-03.jpg';
+---
+
+<section id="quien-soy" class="scroll-mt-20 py-16 md:py-24">
+  <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 md:grid-cols-5">
+    <div class="grid grid-cols-2 gap-3 md:col-span-2">
+      <Image
+        src={foto1}
+        alt="Fátima Alemán con su cámara y flash durante una sesión"
+        class="row-span-2 h-full w-full rounded-xl object-cover"
+        widths={[320, 640]}
+        sizes="(min-width: 768px) 20vw, 45vw"
+      />
+      <Image
+        src={foto2}
+        alt="Fátima Alemán, fotógrafa de AlemanArt"
+        class="aspect-square w-full rounded-xl object-cover"
+        widths={[320, 640]}
+        sizes="(min-width: 768px) 20vw, 45vw"
+      />
+      <Image
+        src={foto3}
+        alt="Fátima Alemán posando con su cámara"
+        class="aspect-square w-full rounded-xl object-cover"
+        widths={[320, 640]}
+        sizes="(min-width: 768px) 20vw, 45vw"
+      />
+    </div>
+
+    <div class="md:col-span-3">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-azul">
+        La persona detrás de la cámara
+      </p>
+      <h2 class="section-title text-3xl sm:text-4xl">¿Quién es AlemanArt?</h2>
+      <div class="mt-6 space-y-4 leading-relaxed text-tinta-suave">
+        <p>
+          Mi nombre es <strong class="text-tinta">Fátima Nicole Alemán</strong>, tengo 22 años
+          y soy fotógrafa independiente. Me dedico a la cobertura de bodas, cumpleaños, quince
+          años, graduaciones y sesiones fotográficas casuales.
+        </p>
+        <p>
+          Mi trabajo se enfoca en retratar y documentar cada sentimiento y emoción de las
+          personas que celebran momentos importantes en sus vidas, a través de fotografías y
+          videos que capturan la esencia de cada instante.
+        </p>
+        <p>
+          Busco crear recuerdos que perduren en el tiempo, conservando cada sonrisa, mirada y
+          detalle especial para que, al volver a ver esas imágenes, puedan revivir las
+          emociones de ese día tan significativo. Mi objetivo es transformar momentos únicos
+          en recuerdos inolvidables que los acompañen toda la vida.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

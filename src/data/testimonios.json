@@ -1,0 +1,28 @@
+{
+  "testimonios": [
+    {
+      "texto": "Estuvieron en mi boda y son excelentes en cuanto a la atención, muy amables todo el equipo de trabajo, excelentes videos y fotografías, 100% recomendados para todo tipo de eventos.",
+      "autor": "Cliente de boda"
+    },
+    {
+      "texto": "Me encantaron, todo muy bonito y excelentes vibras. Hicieron que la toma de fotos se sintiera relajada.",
+      "autor": "Cliente de sesión fotográfica"
+    },
+    {
+      "texto": "Excelente servicio en videos y fotografías, muy profesional. Recomendado para todo tipo de eventos que quieras realizar.",
+      "autor": "Cliente de evento"
+    },
+    {
+      "texto": "Gracias por las fotografías, quedaron bien bonitas.",
+      "autor": "Cliente satisfecho"
+    },
+    {
+      "texto": "Excelente trabajo, me gustan todas.",
+      "autor": "Cliente frecuente"
+    }
+  ],
+  "videos": [
+    { "id": "1206869354", "titulo": "Reel de evento" },
+    { "id": "1206869174", "titulo": "Reel de sesión" }
+  ]
+}

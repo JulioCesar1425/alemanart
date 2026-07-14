@@ -1,0 +1,107 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'AlemanArt — Fotografía de bodas, XV años y eventos en El Salvador',
+  description = 'Fotografía y video profesional para bodas, quince años, graduaciones, cumpleaños y sesiones casuales. Capturamos la esencia de cada instante para crear recuerdos que perduren toda la vida.',
+} = Astro.props;
+
+const WHATSAPP_URL =
+  'https://wa.me/50375878108?text=' +
+  encodeURIComponent('Hola AlemanArt, me gustaría cotizar una sesión fotográfica.');
+
+const REDES = [
+  'https://www.instagram.com/alemanart_sv',
+  'https://www.facebook.com/share/1JTTC3ev6P/',
+];
+
+// Datos estructurados para búsquedas locales (schema.org)
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://alemanart.com/#negocio',
+  name: 'AlemanArt',
+  alternateName: 'Alemán Art Photography',
+  description,
+  url: 'https://alemanart.com',
+  image: 'https://alemanart.com/og.jpg',
+  logo: 'https://alemanart.com/og.jpg',
+  telephone: '+503 7587-8108',
+  priceRange: '$50 - $280',
+  inLanguage: 'es',
+  founder: {
+    '@type': 'Person',
+    name: 'Fátima Nicole Alemán',
+    jobTitle: 'Fotógrafa',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'San Miguel',
+    addressRegion: 'San Miguel',
+    addressCountry: 'SV',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'El Salvador',
+  },
+  sameAs: REDES,
+  knowsAbout: [
+    'Fotografía de bodas',
+    'Fotografía de quince años',
+    'Fotografía de graduaciones',
+    'Fotografía de cumpleaños',
+    'Sesiones fotográficas casuales',
+    'Video de eventos',
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Paquetes fotográficos',
+    itemListElement: [
+      { '@type': 'Offer', name: 'Paquete 1 — Eventos', price: '180', priceCurrency: 'USD' },
+      { '@type': 'Offer', name: 'Paquete 2 — Eventos', price: '210', priceCurrency: 'USD' },
+      { '@type': 'Offer', name: 'Paquete 3 — Eventos', price: '260', priceCurrency: 'USD' },
+    ],
+  },
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og.jpg" />
+    <meta property="og:locale" content="es_SV" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <slot />
+
+    <!-- Botón flotante de WhatsApp -->
+    <a
+      href={WHATSAPP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribir por WhatsApp"
+      class="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azul"
+    >
+      <svg viewBox="0 0 32 32" class="h-7 w-7 fill-current" aria-hidden="true">
+        <path
+          d="M16.004 3C9.383 3 4 8.383 4 15.004c0 2.65.867 5.098 2.328 7.078L4.06 28.94l7.047-2.227a11.93 11.93 0 0 0 4.898 1.043c6.62 0 12.003-5.383 12.003-12.004C28.008 8.383 22.625 3 16.004 3zm0 21.93a9.9 9.9 0 0 1-5.05-1.383l-.363-.215-3.746 1.184 1.207-3.649-.238-.375a9.87 9.87 0 0 1-1.532-5.288c0-5.465 4.446-9.911 9.911-9.911 5.464 0 9.91 4.446 9.91 9.91 0 5.466-4.446 9.912-9.91 9.912zm5.437-7.42c-.297-.15-1.758-.868-2.031-.967-.273-.098-.472-.148-.67.15-.199.296-.768.966-.941 1.164-.174.199-.347.224-.645.075-.297-.15-1.255-.463-2.39-1.475-.884-.788-1.48-1.761-1.654-2.059-.173-.297-.018-.458.13-.606.135-.133.298-.347.447-.521.149-.174.198-.298.297-.497.1-.198.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.372-.01-.57-.01-.199 0-.521.074-.794.372-.273.297-1.042 1.016-1.042 2.479 0 1.462 1.066 2.875 1.215 3.074.149.198 2.096 3.2 5.078 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347z"
+        ></path>
+      </svg>
+    </a>
+  </body>
+</html>

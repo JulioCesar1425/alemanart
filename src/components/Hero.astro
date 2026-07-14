@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import heroFoto from '../assets/marca/hero.jpg';
+
+const WHATSAPP_URL =
+  'https://wa.me/50375878108?text=' +
+  encodeURIComponent('Hola AlemanArt, me gustaría cotizar una sesión fotográfica.');
+---
+
+<section id="inicio" class="brand-wash pt-16">
+  <div
+    class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24"
+  >
+    <div>
+      <p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-azul">
+        Fotografía &amp; video · El Salvador
+      </p>
+      <h1 class="section-title text-4xl leading-tight sm:text-5xl md:text-6xl">
+        Momentos únicos,<br />
+        <span class="italic text-coral">recuerdos inolvidables</span>
+      </h1>
+      <p class="mt-5 max-w-md text-lg leading-relaxed text-tinta-suave">
+        Cobertura profesional de bodas, quince años, graduaciones, cumpleaños y sesiones
+        casuales. Cada sonrisa, mirada y detalle, conservado para siempre.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-full bg-coral px-7 py-3 font-medium text-white transition-colors hover:bg-coral-oscuro"
+        >
+          Cotizar por WhatsApp
+        </a>
+        <a
+          href="#paquetes"
+          class="rounded-full border border-tinta/15 px-7 py-3 font-medium text-tinta transition-colors hover:border-azul hover:text-azul"
+        >
+          Ver paquetes
+        </a>
+      </div>
+    </div>
+
+    <div class="relative">
+      <div class="absolute -inset-3 rotate-2 rounded-2xl bg-dorado/30" aria-hidden="true"></div>
+      <Image
+        src={heroFoto}
+        alt="Pareja de recién casados fotografiada por AlemanArt"
+        class="relative aspect-[4/5] w-full rounded-2xl object-cover shadow-xl"
+        widths={[480, 800, 1200]}
+        sizes="(min-width: 768px) 45vw, 90vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</section>

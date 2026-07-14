@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+
+const WHATSAPP_URL =
+  'https://wa.me/50375878108?text=' +
+  encodeURIComponent('Hola AlemanArt, me gustaría más información sobre sus servicios.');
+---
+
+<Layout
+  title="Página no encontrada — AlemanArt"
+  description="La página que buscas no existe. Vuelve al inicio para ver el portafolio de AlemanArt."
+>
+  <main class="brand-wash flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <p class="section-title text-7xl text-coral sm:text-8xl">404</p>
+
+    <div class="mx-auto my-7 flex w-full max-w-xs items-center gap-4" aria-hidden="true">
+      <span class="h-px flex-1 bg-tinta/10"></span>
+      <svg class="h-4 w-4 shrink-0 text-dorado" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l2.4 7.1H22l-6.1 4.4 2.3 7.1L12 16.2 5.8 20.6l2.3-7.1L2 9.1h7.6z"></path>
+      </svg>
+      <span class="h-px flex-1 bg-tinta/10"></span>
+    </div>
+
+    <h1 class="section-title text-3xl sm:text-4xl">Esta toma no salió</h1>
+    <p class="mt-4 max-w-md leading-relaxed text-tinta-suave">
+      La página que buscas no existe o cambió de lugar. Volvamos a donde están los recuerdos.
+    </p>
+
+    <div class="mt-9 flex flex-wrap justify-center gap-4">
+      <a
+        href="/"
+        class="rounded-full bg-coral px-7 py-3 font-medium text-white transition-colors hover:bg-coral-oscuro"
+      >
+        Volver al inicio
+      </a>
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-full border border-tinta/15 px-7 py-3 font-medium text-tinta transition-colors hover:border-azul hover:text-azul"
+      >
+        Escribir por WhatsApp
+      </a>
+    </div>
+
+    <a href="/#galeria" class="mt-8 text-sm font-medium text-azul underline underline-offset-4">
+      O explora la galería
+    </a>
+  </main>
+</Layout>

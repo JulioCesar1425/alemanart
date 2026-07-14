@@ -1,0 +1,429 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
+
+const categorias: Record<string, { titulo: string; tagline: string; alt: string }> = {
+  bodas: {
+    titulo: 'Bodas',
+    tagline: 'Tu historia de amor inmortalizada para siempre',
+    alt: 'Fotografía de boda',
+  },
+  celebraciones: {
+    titulo: 'Celebraciones',
+    tagline: 'XV años y cumpleaños: cada momento importa',
+    alt: 'Fotografía de quinceañera o cumpleaños',
+  },
+  graduacion: {
+    titulo: 'Graduaciones',
+    tagline: 'El esfuerzo de hoy, el éxito de mañana',
+    alt: 'Fotografía de graduación',
+  },
+  'sesiones-casuales': {
+    titulo: 'Sesiones casuales',
+    tagline: 'Individuales, parejas, familiares y más',
+    alt: 'Fotografía de sesión casual',
+  },
+};
+
+// Todas las imágenes físicas del proyecto, para resolver las rutas guardadas por el panel.
+const archivos = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/galeria/**/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}',
+  { eager: true }
+);
+
+// El panel guarda rutas como /src/assets/galeria/...; los módulos usan ../assets/galeria/...
+const resolver = (ruta: string): ImageMetadata | null => {
+  const clave = ruta.trim().replace(/^\/?src\//, '../');
+  return archivos[clave]?.default ?? null;
+};
+
+// Fichas de la galería (administradas desde /admin), más recientes primero.
+const entradas = (await getCollection('galeria'))
+  .filter((e) => e.data.categoria in categorias)
+  .sort((a, b) => b.data.fecha.valueOf() - a.data.fecha.valueOf());
+
+type Foto = {
+  id: string;
+  cat: string;
+  thumb: Awaited<ReturnType<typeof getImage>>;
+  grande: Awaited<ReturnType<typeof getImage>>;
+  ancho: number;
+  alto: number;
+  alt: string;
+};
+
+// Anchos para srcset: cubren pantallas retina (2x) de todos los contenedores del sitio.
+const ANCHOS = [320, 480, 640, 800, 1120, 1440];
+
+const fotos: Foto[] = [];
+for (const e of entradas) {
+  const meta = resolver(e.data.imagen);
+  if (!meta) {
+    // Una ficha que apunta a una imagen inexistente se omite en lugar de romper el build.
+    console.warn(`[galeria] Imagen no encontrada, se omite: ${e.data.imagen} (${e.id})`);
+    continue;
+  }
+  const grande = await getImage({ src: meta, format: 'webp', quality: 82 });
+  const thumb = await getImage({
+    src: meta,
+    widths: ANCHOS.filter((w) => w <= meta.width),
+    format: 'webp',
+    quality: 78,
+  });
+  fotos.push({
+    id: e.id,
+    cat: e.data.categoria,
+    thumb,
+    grande,
+    ancho: meta.width,
+    alto: meta.height,
+    alt: `${categorias[e.data.categoria].alt} — ${e.data.titulo}`,
+  });
+}
+
+const porCategoria: Record<string, Foto[]> = {};
+for (const f of fotos) (porCategoria[f.cat] ??= []).push(f); // conserva el orden (desc)
+
+// Collage: mosaico de teselado exacto (sin huecos).
+// Móvil: 2 columnas x 12 filas. Escritorio: 4 columnas x 6 filas.
+// La pieza grande abarca 2 columnas en escritorio, por eso pide más resolución.
+const SIZES_GRANDE = '(min-width: 768px) 560px, 47vw';
+const SIZES_NORMAL = '(min-width: 768px) 280px, 47vw';
+const SIZES_PANEL = '(min-width: 768px) 370px, 47vw';
+const SIZES_TARJETA = '(min-width: 768px) 270px, 47vw';
+
+const POSICIONES = [
+  { sizes: SIZES_GRANDE, pos: 'col-start-1 row-start-1 row-span-3  md:col-start-1 md:col-span-2 md:row-start-1 md:row-span-2' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-1 row-span-2  md:col-start-3 md:col-span-1 md:row-start-1 md:row-span-3' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-1 row-start-4 row-span-2  md:col-start-4 md:col-span-1 md:row-start-1 md:row-span-3' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-3 row-span-3  md:col-start-1 md:col-span-1 md:row-start-3 md:row-span-2' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-1 row-start-6 row-span-3  md:col-start-2 md:col-span-1 md:row-start-3 md:row-span-3' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-6 row-span-2  md:col-start-3 md:col-span-1 md:row-start-4 md:row-span-3' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-1 row-start-9 row-span-2  md:col-start-4 md:col-span-1 md:row-start-4 md:row-span-2' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-8 row-span-3  md:col-start-1 md:col-span-1 md:row-start-5 md:row-span-2' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-1 row-start-11 row-span-2 md:col-start-2 md:col-span-1 md:row-start-6 md:row-span-1' },
+  { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-11 row-span-2 md:col-start-4 md:col-span-1 md:row-start-6 md:row-span-1' },
+];
+
+// Selección automática: las fotos más recientes, alternando categorías para variedad.
+const ordenCats = Object.keys(categorias);
+const colas: Record<string, Foto[]> = Object.fromEntries(
+  ordenCats.map((c) => [c, [...(porCategoria[c] ?? [])]])
+);
+const seleccion: Foto[] = [];
+while (seleccion.length < POSICIONES.length) {
+  let agrego = false;
+  for (const c of ordenCats) {
+    if (seleccion.length >= POSICIONES.length) break;
+    const f = colas[c].shift();
+    if (f) {
+      seleccion.push(f);
+      agrego = true;
+    }
+  }
+  if (!agrego) break; // no quedan fotos
+}
+const collage = seleccion.map((foto, i) => ({ foto, ...POSICIONES[i] }));
+
+// Portadas rotativas: las 3 más recientes de cada categoría,
+// prefiriendo las que no aparecen ya en el collage.
+const usadas = new Set(seleccion.map((f) => f.id));
+const portadas: Record<string, Foto[]> = {};
+for (const c of ordenCats) {
+  const deCat = porCategoria[c] ?? [];
+  const libres = deCat.filter((f) => !usadas.has(f.id));
+  portadas[c] = [...libres, ...deCat.filter((f) => usadas.has(f.id))].slice(0, 3);
+}
+
+// Solo se muestran categorías que tienen al menos una foto.
+const claves = ordenCats.filter((c) => (porCategoria[c] ?? []).length > 0);
+const VIDEO_ID = 'fok4ZSQ71qg';
+---
+
+<section id="galeria" class="scroll-mt-20 bg-white py-16 md:py-24">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="text-center">
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-azul">
+        Capturamos tu historia
+      </p>
+      <h2 class="section-title text-3xl sm:text-4xl">Cada evento, un recuerdo para siempre</h2>
+    </div>
+
+    <!-- Collage -->
+    <div
+      id="collage"
+      class="pswp-galeria mt-10 grid grid-cols-2 gap-2.5 [grid-template-rows:repeat(12,minmax(0,58px))] sm:[grid-template-rows:repeat(12,minmax(0,80px))] md:grid-cols-4 md:gap-3 md:[grid-template-rows:repeat(6,minmax(0,118px))] lg:[grid-template-rows:repeat(6,minmax(0,140px))]"
+    >
+      {
+        collage.map(({ foto, pos, sizes }) => (
+          <a
+            href={foto.grande.src}
+            data-pswp-width={foto.ancho}
+            data-pswp-height={foto.alto}
+            class:list={[
+              'group relative block overflow-hidden rounded-xl ring-1 ring-tinta/5',
+              pos,
+            ]}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              src={foto.thumb.src}
+              srcset={foto.thumb.srcSet.attribute}
+              sizes={sizes}
+              alt={foto.alt}
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.07]"
+            />
+            <span
+              class="pointer-events-none absolute inset-0 bg-gradient-to-t from-tinta/45 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              aria-hidden="true"
+            />
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- Separador: presenta las tarjetas de categoría -->
+    <div class="mt-16 text-center md:mt-20">
+      <div class="mx-auto mb-7 flex max-w-xs items-center gap-4" aria-hidden="true">
+        <span class="h-px flex-1 bg-tinta/10"></span>
+        <svg class="h-4 w-4 shrink-0 text-dorado" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l2.4 7.1H22l-6.1 4.4 2.3 7.1L12 16.2 5.8 20.6l2.3-7.1L2 9.1h7.6z" />
+        </svg>
+        <span class="h-px flex-1 bg-tinta/10"></span>
+      </div>
+      <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-azul">
+        Explora por categoría
+      </p>
+      <h3 class="section-title text-2xl sm:text-3xl">Nuestro trabajo, evento por evento</h3>
+      <p class="mx-auto mt-3 max-w-xl text-tinta-suave">
+        Estas son fotografías de referencia de nuestro trabajo. Elige una categoría para ver
+        la galería completa de ese tipo de evento.
+      </p>
+    </div>
+
+    <!-- Tarjetas de categoría -->
+    <div class="mt-9 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
+      {
+        claves.map((c) => (
+          <button
+            type="button"
+            class="card-categoria group overflow-hidden rounded-2xl border border-tinta/10 bg-crema text-left transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azul"
+            data-cat={c}
+          >
+            <div class="overflow-hidden">
+              <div class="portadas relative aspect-[3/4] transition-transform duration-300 group-hover:scale-105">
+                {portadas[c].map((f, i) => (
+                  <img
+                    src={f.thumb.src}
+                    srcset={f.thumb.srcSet.attribute}
+                    sizes={SIZES_TARJETA}
+                    alt={categorias[c].alt}
+                    loading="lazy"
+                    decoding="async"
+                    class:list={[
+                      'portada absolute inset-0 h-full w-full object-cover',
+                      i === 0 ? 'is-active' : 'is-next',
+                    ]}
+                  />
+                ))}
+                <span
+                  class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-tinta/30 to-transparent"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="section-title text-lg">{categorias[c].titulo}</h3>
+              <p class="mt-1 text-xs leading-relaxed text-tinta-suave">
+                {categorias[c].tagline}
+              </p>
+              <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-coral">
+                Ver más
+                <svg class="h-3 w-3" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.7" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Panel de categoría -->
+    <div id="panel-categoria" class="mt-10 hidden scroll-mt-24 rounded-2xl bg-crema p-5 sm:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h3 id="panel-titulo" class="section-title text-2xl sm:text-3xl"></h3>
+        <button
+          type="button"
+          id="panel-cerrar"
+          class="flex shrink-0 items-center gap-2 rounded-full border border-tinta/15 px-4 py-2 text-sm font-medium text-tinta-suave transition-colors hover:border-coral hover:text-coral"
+        >
+          Cerrar
+          <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+            <path d="M3 3l10 10M13 3L3 13" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      {
+        claves.map((c) => (
+          <div
+            class="panel-grid pswp-galeria mt-6 hidden columns-2 gap-3 md:columns-3 [&>a]:mb-3"
+            data-cat={c}
+          >
+            {fotos
+              .filter((f) => f.cat === c)
+              .map((f) => (
+                <a
+                  href={f.grande.src}
+                  data-pswp-width={f.ancho}
+                  data-pswp-height={f.alto}
+                  class="group block overflow-hidden rounded-lg"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    src={f.thumb.src}
+                    srcset={f.thumb.srcSet.attribute}
+                    sizes={SIZES_PANEL}
+                    alt={f.alt}
+                    width={f.ancho}
+                    height={f.alto}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-auto w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </a>
+              ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Video destacado a lo ancho -->
+  <div class="mt-16 bg-tinta py-14 md:mt-24 md:py-20">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+      <div class="text-center text-crema">
+        <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-dorado">
+          Revive momentos
+        </p>
+        <h3 class="section-title text-2xl sm:text-4xl">
+          Emociones que se ven, recuerdos que se sienten
+        </h3>
+        <p class="mx-auto mt-3 max-w-lg text-sm text-crema/70">
+          Cada imagen cuenta una historia, cada video la hace inolvidable.
+        </p>
+      </div>
+      <div class="mt-9 overflow-hidden rounded-2xl border border-crema/10 shadow-2xl">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${VIDEO_ID}?rel=0`}
+          title="Video destacado de AlemanArt"
+          class="aspect-video w-full"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="fullscreen; picture-in-picture; encrypted-media"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import PhotoSwipeLightbox from 'photoswipe/lightbox';
+  import 'photoswipe/style.css';
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '.pswp-galeria',
+    children: 'a',
+    pswpModule: () => import('photoswipe'),
+  });
+  lightbox.init();
+
+  const panel = document.getElementById('panel-categoria');
+  const titulo = document.getElementById('panel-titulo');
+  const grids = document.querySelectorAll<HTMLElement>('.panel-grid');
+  const nombres: Record<string, string> = {
+    bodas: 'Bodas',
+    celebraciones: 'Celebraciones',
+    graduacion: 'Graduaciones',
+    'sesiones-casuales': 'Sesiones casuales',
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.card-categoria').forEach((card) => {
+    card.addEventListener('click', () => {
+      const cat = card.dataset.cat ?? '';
+      if (titulo) titulo.textContent = nombres[cat] ?? '';
+      grids.forEach((g) => g.classList.toggle('hidden', g.dataset.cat !== cat));
+      panel?.classList.remove('hidden');
+      panel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  document.getElementById('panel-cerrar')?.addEventListener('click', () => {
+    panel?.classList.add('hidden');
+    document.getElementById('galeria')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Portadas rotativas: cada tarjeta cicla sus 3 fotos con desvanecido lateral.
+  const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!sinMovimiento) {
+    const DURACION = 700; // debe coincidir con la transición CSS
+    document.querySelectorAll<HTMLElement>('.portadas').forEach((caja, idx) => {
+      const slides = Array.from(caja.querySelectorAll<HTMLElement>('.portada'));
+      if (slides.length < 2) return;
+
+      let i = 0;
+      const avanzar = () => {
+        const actual = slides[i];
+        const siguiente = slides[(i + 1) % slides.length];
+
+        actual.classList.replace('is-active', 'is-prev');
+        siguiente.classList.remove('is-next', 'is-prev');
+        siguiente.classList.add('is-active');
+
+        // Al terminar la salida, la foto vieja vuelve a la derecha lista para reaparecer.
+        window.setTimeout(() => actual.classList.replace('is-prev', 'is-next'), DURACION);
+
+        i = (i + 1) % slides.length;
+      };
+
+      // Desfase por tarjeta para que no cambien todas a la vez.
+      window.setTimeout(() => window.setInterval(avanzar, 6000), idx * 1350);
+    });
+  }
+</script>
+
+<style>
+  .portada {
+    opacity: 0;
+    transform: translateX(8%);
+    transition:
+      opacity 700ms ease,
+      transform 700ms ease;
+    will-change: opacity, transform;
+  }
+  .portada.is-active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .portada.is-prev {
+    opacity: 0;
+    transform: translateX(-8%);
+  }
+  .portada.is-next {
+    opacity: 0;
+    transform: translateX(8%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portada {
+      transition: none;
+    }
+  }
+</style>

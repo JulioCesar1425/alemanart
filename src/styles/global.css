@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+/* Fuentes autoalojadas (sin peticiones a Google Fonts) */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+
+@theme {
+  --color-coral: #E63946;
+  --color-coral-oscuro: #B02836;
+  --color-rosa: #F4A6A9;
+  --color-azul: #0B5FB8;
+  --color-azul-oscuro: #083E77;
+  --color-dorado: #E7B563;
+  --color-crema: #FBF8F4;
+  --color-tinta: #211C1A;
+  --color-tinta-suave: #55504C;
+
+  --font-display: "Playfair Display Variable", "Playfair Display", Georgia, serif;
+  --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-crema);
+  color: var(--color-tinta);
+  -webkit-font-smoothing: antialiased;
+  /* Red de seguridad: ningún elemento debe generar scroll horizontal. */
+  overflow-x: hidden;
+}
+
+/* Los medios nunca desbordan su contenedor, sin importar sus dimensiones. */
+img,
+svg,
+video,
+iframe {
+  max-width: 100%;
+}
+
+/* Evita que palabras muy largas rompan el layout en pantallas angostas. */
+h1,
+h2,
+h3,
+p,
+blockquote,
+li {
+  overflow-wrap: break-word;
+}
+
+/* Área táctil mínima recomendada (44x44) para botones y enlaces de acción. */
+@media (pointer: coarse) {
+  a[class*='rounded-full'],
+  button {
+    min-height: 44px;
+  }
+}
+
+/* Foco visible y consistente para navegación por teclado. */
+:focus-visible {
+  outline: 2px solid var(--color-azul);
+  outline-offset: 2px;
+}
+
+/* Barra degradada de marca: rojo -> rosa -> blanco -> azul */
+.brand-bar {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    #e63946 0%,
+    #f4a6a9 30%,
+    #fbf8f4 50%,
+    #7fb0e8 70%,
+    #0b5fb8 100%
+  );
+}
+
+/* Lavado suave del degradado de marca para fondos de sección */
+.brand-wash {
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgba(230, 57, 70, 0.10), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 0%, rgba(11, 95, 184, 0.10), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(231, 181, 99, 0.12), transparent 70%);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

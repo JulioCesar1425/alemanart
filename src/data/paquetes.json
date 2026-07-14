@@ -1,0 +1,103 @@
+{
+  "eventos": [
+    {
+      "nombre": "Paquete 1",
+      "precio": "$180",
+      "destacado": false,
+      "items": [
+        "Galería digital con fotografías completamente editadas",
+        "50 fotografías impresas en tamaño 4x6",
+        "Video resumen de 7 minutos con los momentos más destacados",
+        "Memoria USB con todas las fotografías y el video",
+        "Cobertura desde el inicio de la misa hasta la fiesta",
+        "Entrega en 5 días hábiles"
+      ]
+    },
+    {
+      "nombre": "Paquete 2",
+      "precio": "$210",
+      "destacado": true,
+      "items": [
+        "Sesión previa en casa (maquillaje, traje, detalles)",
+        "Galería digital con fotografías completamente editadas",
+        "50 fotografías impresas en tamaño 4x6",
+        "Cuadro de resina de 5x6",
+        "Video resumen de 15 minutos (modificable)",
+        "Reel de 1 minuto ideal para redes sociales",
+        "Memoria USB con todas las fotografías y videos",
+        "Entrega en 10 días hábiles"
+      ]
+    },
+    {
+      "nombre": "Paquete 3",
+      "precio": "$260",
+      "destacado": false,
+      "items": [
+        "Galería digital completamente editada",
+        "Video resumen completo de 30 minutos",
+        "2 reels (videos de 1 minuto cada uno)",
+        "100 fotografías impresas tamaño 4x6",
+        "Memoria USB con todas las fotografías y videos",
+        "Cobertura total (desde la preparación hasta la recepción)",
+        "Cuadro de resina de 12x18",
+        "Entrega en 10 días hábiles"
+      ]
+    }
+  ],
+  "casuales": [
+    {
+      "nombre": "Paquete 1",
+      "precio": "$50",
+      "destacado": false,
+      "items": [
+        "2 horas de sesión fotográfica",
+        "Entrega completa de todas las fotografías",
+        "Galería digital completamente editada",
+        "Puedes elegir la temática y el lugar de tu preferencia",
+        "Entrega dos días después de la sesión"
+      ],
+      "nota": "Aplica para Berlín, Alegría y Santiago de María"
+    },
+    {
+      "nombre": "Paquete 2",
+      "precio": "$60",
+      "destacado": true,
+      "items": [
+        "Cobertura fotográfica completa durante la sesión",
+        "Galería digital con fotografías completamente editadas y entregadas de forma limitada",
+        "15 fotografías impresas en tamaño 4x6",
+        "Video tipo reel para redes sociales (~1 minuto)",
+        "Cobertura total del evento durante la sesión para capturar los mejores momentos y detalles",
+        "Entrega 3 días después de la sesión"
+      ]
+    },
+    {
+      "nombre": "Paquete 3",
+      "precio": "$280",
+      "destacado": false,
+      "items": [
+        "3 horas de sesión fotográfica (tiempo estipulado para el cambio de vestido, poses, accesorios, entre otros)",
+        "Entrega de galería digital con fotografías completamente editadas y de calidad",
+        "Spot de 1 minuto con tomas profesionales (incluye tomas de dron)",
+        "Cuadro de resina de 12x18"
+      ]
+    }
+  ],
+  "extras": [
+    "Video de 1 hora y media aprox.",
+    "Transmisión en vivo de su fiesta",
+    "Carrusel de fotografías elegidas previamente para transmitir durante la fiesta",
+    "Paquete de fotos Polaroid al instante (40 fotos)",
+    "Video sorpresa de 2 minutos",
+    "Video sorpresa para la fiesta",
+    "Código QR con fotografías"
+  ],
+  "video": [
+    "Spots publicitarios para marcas y negocios",
+    "Video resumen de eventos (7 min)",
+    "Video resumen cinematográfico (20 min)",
+    "Video resumen premium (30 min)",
+    "Tomas aéreas con dron",
+    "Video pre-evento para XV años y bodas"
+  ]
+}
