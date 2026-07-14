@@ -6,7 +6,7 @@
 
 backend:
   name: github
-  repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
+  repo: JulioCesar1425/alemanart # ← CAMBIAR ESTO
   branch: main
   # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4):
   # base_url: https://sveltia-cms-auth.TU-SUBDOMINIO.workers.dev
