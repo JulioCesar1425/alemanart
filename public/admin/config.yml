@@ -9,7 +9,7 @@ backend:
   repo: JulioCesar1425/alemanart # ← CAMBIAR ESTO
   branch: main
   # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4):
-  # base_url: https://sveltia-cms-auth.TU-SUBDOMINIO.workers.dev
+  base_url: https://sveltia-cms-auth.photoography.workers.dev
 
 media_folder: src/assets/galeria/subidas
 public_folder: /src/assets/galeria/subidas
