@@ -22,7 +22,9 @@ npm run preview  # previsualizar el build
 
 ```
 src/
-  assets/galeria/       # fotos por categoría (bodas, celebraciones, graduacion, sesiones-casuales)
+  assets/galeria/fotos/ # todas las fotos (la categoría la define cada ficha, no la carpeta)
+  assets/marca/         # logo, hero y fotos de "Quién soy" (fijas, fuera del panel)
+  content/galeria/      # una ficha .md por foto, creada/borrada desde /admin
   components/           # Header, Hero, QuienSoy, Paquetes, ServicioVideo, Galeria, Testimonios, Contacto
   data/
     paquetes.json       # paquetes de eventos y casuales, extras y servicios de video
@@ -36,11 +38,12 @@ src/
 
 - **Precios / paquetes / extras**: editar `src/data/paquetes.json`
 - **Testimonios o videos de YouTube**: editar `src/data/testimonios.json`
-- **Agregar fotos**: colocar el `.jpg` en la carpeta de su categoría dentro de
-  `src/assets/galeria/` — la galería las detecta automáticamente al compilar.
-  Recomendado: máx. 1800px de lado largo.
-- **Nueva categoría**: crear la carpeta en `src/assets/galeria/` y agregar su
-  entrada en el objeto `categorias` de `src/components/Galeria.astro`.
+- **Agregar fotos**: usar el panel en `/admin` (ver GUIA-PANEL.md). Manualmente:
+  poner el `.jpg` en `src/assets/galeria/fotos/` y crear su ficha en
+  `src/content/galeria/`. Recomendado: máx. 1800px de lado largo.
+- **Nueva categoría**: agregarla al objeto `categorias` de
+  `src/components/Galeria.astro` y a las opciones del campo `categoria` en
+  `public/admin/config.yml`.
 - **Número de WhatsApp**: buscar `50375878108` (aparece en Layout, Hero,
   Paquetes y Contacto).
 

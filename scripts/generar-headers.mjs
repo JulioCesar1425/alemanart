@@ -36,9 +36,12 @@ const sha256 = (texto) => `'sha256-${createHash('sha256').update(texto, 'utf8').
 
 const paginas = await buscarHtml(DIST);
 const hashes = new Set();
+// Los scripts del panel (/admin) se autorizan en su propia CSP, no en la global.
+const hashesAdmin = new Set();
 for (const pagina of paginas) {
+  const esAdmin = pagina.replace(/\\/g, '/').includes('/admin/');
   for (const script of scriptsEnLinea(await readFile(pagina, 'utf8'))) {
-    hashes.add(sha256(script));
+    (esAdmin ? hashesAdmin : hashes).add(sha256(script));
   }
 }
 
@@ -98,7 +101,7 @@ const contenido = `# Generado automáticamente por scripts/generar-headers.mjs �
 /admin/*
   ! Content-Security-Policy
   ! Cross-Origin-Resource-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://github.com
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com ${[...hashesAdmin].join(' ')}; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://github.com
   X-Robots-Tag: noindex
 
 # Los assets llevan hash en el nombre: se cachean para siempre (mejora el rendimiento).
@@ -115,5 +118,5 @@ const contenido = `# Generado automáticamente por scripts/generar-headers.mjs �
 
 await writeFile(join(DIST, '_headers'), contenido, 'utf8');
 console.log(
-  `✓ dist/_headers generado — ${paginas.length} página(s), ${hashes.size} hash(es) de script en línea`
+  `✓ dist/_headers generado — ${paginas.length} página(s), ${hashes.size} hash(es) del sitio, ${hashesAdmin.size} del panel`
 );

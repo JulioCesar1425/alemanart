@@ -4,15 +4,114 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Panel de AlemanArt</title>
+    <title>Panel de fotos · AlemanArt</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <style>
+      /* Colores de la marca AlemanArt */
+      :root {
+        --aa-coral: #e63946;
+        --aa-azul: #0b5fb8;
+        --aa-dorado: #e7b563;
+        --aa-crema: #fbf8f4;
+        --aa-tinta: #211c1a;
+        --aa-tinta-suave: #55504c;
+      }
+
+      /* Pantalla de bienvenida mientras el panel arranca */
+      #aa-cargando {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        text-align: center;
+        background:
+          radial-gradient(ellipse 60% 50% at 0% 0%, rgba(230, 57, 70, 0.12), transparent 70%),
+          radial-gradient(ellipse 60% 50% at 100% 0%, rgba(11, 95, 184, 0.12), transparent 70%),
+          radial-gradient(ellipse 70% 60% at 50% 100%, rgba(231, 181, 99, 0.14), transparent 70%),
+          var(--aa-crema);
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        transition: opacity 0.4s ease;
+      }
+      #aa-cargando .aa-logo {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--aa-tinta);
+      }
+      #aa-cargando .aa-logo span {
+        color: var(--aa-coral);
+      }
+      #aa-cargando .aa-sub {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--aa-tinta-suave);
+      }
+      #aa-cargando .aa-spinner {
+        width: 34px;
+        height: 34px;
+        border: 3px solid rgba(33, 28, 26, 0.12);
+        border-top-color: var(--aa-coral);
+        border-radius: 50%;
+        animation: aa-giro 0.8s linear infinite;
+      }
+      @keyframes aa-giro {
+        to { transform: rotate(360deg); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #aa-cargando .aa-spinner { animation-duration: 2s; }
+      }
+
+      /* Acentos del panel con los colores de la marca */
+      :root {
+        --sui-primary-accent-color: #0b5fb8;
+        --sui-primary-accent-color-light: #2b7fd8;
+        --sui-primary-accent-color-dark: #083e77;
+        --sui-primary-accent-color-text: #ffffff;
+      }
+    </style>
   </head>
   <body>
+    <div id="aa-cargando">
+      <p class="aa-logo">Aleman<span>Art</span></p>
+      <div class="aa-spinner"></div>
+      <p class="aa-sub">Cargando el panel de fotos…</p>
+    </div>
+
     <!--
-      Panel de administración de fotos (Sveltia CMS, compatible con Decap CMS).
-      Si algún día se prefiere Decap, basta reemplazar la línea de abajo por:
-      <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+      Panel de administración (Sveltia CMS, compatible con Decap CMS).
+      IMPORTANTE: este <script> no debe llevar type="module" — la documentación
+      oficial advierte que causa comportamiento inesperado en la interfaz.
     -->
-    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+
+    <script>
+      // Retira la pantalla de bienvenida cuando el panel ya tomó el control.
+      (function () {
+        var quitar = function () {
+          var c = document.getElementById('aa-cargando');
+          if (!c) return;
+          c.style.opacity = '0';
+          setTimeout(function () { c.remove(); }, 450);
+        };
+        // Cuando Sveltia monta su interfaz, inserta elementos en el <body>.
+        var observador = new MutationObserver(function () {
+          if (document.querySelector('#app, .sui, [class*="sveltia"]')) {
+            observador.disconnect();
+            quitar();
+          }
+        });
+        observador.observe(document.body, { childList: true, subtree: true });
+        // Respaldo por si el observador no detecta nada.
+        setTimeout(function () { observador.disconnect(); quitar(); }, 6000);
+      })();
+    </script>
   </body>
 </html>

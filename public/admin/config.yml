@@ -1,58 +1,89 @@
-# Configuración del panel de administración de AlemanArt
-# ─────────────────────────────────────────────────────────
-# ÚNICO CAMBIO OBLIGATORIO antes de usar: en "repo", reemplaza
-# TU-USUARIO por tu nombre de usuario de GitHub (y "alemanart"
-# por el nombre del repositorio si usaste otro).
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# Configuración del panel de fotos de AlemanArt
+# ─────────────────────────────────────────────────────────────
+# ÚNICO CAMBIO OBLIGATORIO: en "repo", reemplaza TU-USUARIO por
+# tu nombre de usuario de GitHub (y "alemanart" por el nombre del
+# repositorio, si usaste otro).
 
 backend:
   name: github
   repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
   branch: main
-  # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4):
+  commit_messages:
+    create: 'Nueva foto: {{slug}}'
+    update: 'Foto actualizada: {{slug}}'
+    delete: 'Foto eliminada: {{slug}}'
+    uploadMedia: 'Imagen subida: {{path}}'
+    deleteMedia: 'Imagen eliminada: {{path}}'
+  # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4).
+  # Sin esto, se entra con un token personal de GitHub ("Sign in with Token").
   # base_url: https://sveltia-cms-auth.TU-SUBDOMINIO.workers.dev
 
-media_folder: src/assets/galeria/subidas
-public_folder: /src/assets/galeria/subidas
+# Todas las fotos viven en una sola carpeta. La categoría la define
+# el campo "categoria" de cada ficha, no la carpeta.
+media_folder: src/assets/galeria/fotos
+public_folder: /src/assets/galeria/fotos
 
-# Cada guardado se publica directo (dispara 1 build, ~2 min en verse en línea)
-locale: es
+# Vista de cuadrícula con miniaturas grandes por defecto
+media_library:
+  folder_support: false
 
 collections:
   - name: galeria
-    label: Galería de fotos
+    label: Fotos del sitio
     label_singular: Foto
+    icon: photo_library
     description: >-
-      Agrega, cambia o elimina las fotos del sitio. Las más recientes aparecen
-      primero automáticamente. Cada foto necesita un título corto y su categoría.
+      Agrega, cambia o elimina las fotos que se muestran en el sitio. Las más
+      recientes aparecen primero de forma automática.
     folder: src/content/galeria
     create: true
     delete: true
-    format: frontmatter
+    format: yaml-frontmatter
     extension: md
-    slug: '{{fields.categoria}}-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}'
-    summary: '{{titulo}} · {{categoria}}'
-    sortable_fields: ['fecha', 'titulo', 'categoria']
+    slug: '{{fields.categoria}}-{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}'
+    summary: '{{titulo}}'
+    thumbnail: imagen
+    sortable_fields:
+      fields: [fecha, titulo, categoria]
+      default:
+        field: fecha
+        direction: descending
+    view_filters:
+      filters:
+        - { label: 'Bodas', field: categoria, pattern: 'bodas' }
+        - { label: 'Celebraciones', field: categoria, pattern: 'celebraciones' }
+        - { label: 'Graduaciones', field: categoria, pattern: 'graduacion' }
+        - { label: 'Sesiones casuales', field: categoria, pattern: 'sesiones-casuales' }
     view_groups:
-      - label: Categoría
-        field: categoria
+      groups:
+        - { label: 'Categoría', field: categoria }
     fields:
-      - label: Título
-        name: titulo
-        widget: string
-        hint: 'Un nombre corto para identificarla, por ejemplo: Boda de María y José'
-      - label: Categoría
-        name: categoria
-        widget: select
-        options:
-          - { label: 'Bodas', value: 'bodas' }
-          - { label: 'Celebraciones (XV y cumpleaños)', value: 'celebraciones' }
-          - { label: 'Graduaciones', value: 'graduacion' }
-          - { label: 'Sesiones casuales', value: 'sesiones-casuales' }
       - label: Fotografía
         name: imagen
         widget: image
-        hint: 'Sube la foto aquí. Recomendado: máximo 1800px de lado largo.'
+        hint: 'Arrastra la foto aquí o haz clic para elegirla. Recomendado: máximo 1800px de lado largo.'
+
+      - label: Título
+        name: titulo
+        widget: string
+        hint: 'Nombre corto para identificarla. Ejemplo: Boda de María y José'
+
+      - label: Categoría
+        name: categoria
+        widget: select
+        default: bodas
+        hint: 'Determina en qué sección del sitio aparece la foto.'
+        options:
+          - { label: 'Bodas', value: bodas }
+          - { label: 'Celebraciones (XV y cumpleaños)', value: celebraciones }
+          - { label: 'Graduaciones', value: graduacion }
+          - { label: 'Sesiones casuales', value: sesiones-casuales }
+
       - label: Fecha
         name: fecha
         widget: datetime
-        hint: 'Determina el orden: las más nuevas aparecen primero. Se llena sola.'
+        default: ''
+        picker_utc: false
+        hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'

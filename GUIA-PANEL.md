@@ -11,9 +11,9 @@ minutos. Después, tu día a día es solo la Parte 5.
 ## Cómo funciona (en 30 segundos)
 
 - Tu sitio vive en **GitHub** (una caja fuerte gratuita para los archivos del proyecto).
-- **Cloudflare Pages** vigila esa caja: cada vez que algo cambia, reconstruye y publica
+- **Cloudflare** vigila esa caja: cada vez que algo cambia, reconstruye y publica
   el sitio automáticamente (gratis, hasta 500 publicaciones al mes).
-- El **panel** (`tusitio.pages.dev/admin`) es la pantalla amigable con la que tú cambias
+- El **panel** (`tusitio.workers.dev/admin`) es la pantalla amigable con la que tú cambias
   las fotos sin tocar nada técnico. Cada cambio tarda ~2 minutos en verse en línea.
 
 ---
@@ -44,39 +44,45 @@ minutos. Después, tu día a día es solo la Parte 5.
 
 ---
 
-## Parte 2 — Conectar Cloudflare Pages (una sola vez)
+## Parte 2 — Conectar Cloudflare (una sola vez)
+
+> Cloudflare unificó "Pages" y "Workers" en un solo producto. Si en tu panel solo
+> ves **Workers & Pages**, es lo normal: sigue estos pasos tal cual.
 
 1. Crea una cuenta gratis en [dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up).
-2. En el menú izquierdo: **Workers & Pages** → botón **Create** → pestaña **Pages** →
-   **Connect to Git**.
-3. Autoriza a Cloudflare a ver tu GitHub y selecciona el repositorio `alemanart`.
+2. Menú izquierdo: **Compute → Workers & Pages** → botón **Create application**.
+3. Elige la opción de **importar un repositorio de Git** (no "plantilla" ni "Worker en
+   blanco"). Autoriza a Cloudflare a ver tu GitHub y selecciona `alemanart`.
 4. En la pantalla de configuración:
-   - **Framework preset:** Astro
    - **Build command:** `npm run build`
-   - **Build output directory:** `dist`
-   - En **Environment variables**, agrega una: nombre `NODE_VERSION`, valor `22`
-5. Botón **Save and Deploy**. La primera compilación tarda unos minutos.
-6. Al terminar te dará tu dirección: algo como `https://alemanart.pages.dev`.
+   - **Deploy command:** `npx wrangler deploy` (viene por defecto; el proyecto ya
+     incluye el archivo `wrangler.jsonc` que hace que esto funcione)
+   - En **Environment variables**, agrega: nombre `NODE_VERSION`, valor `22`
+5. Botón **Deploy**. La primera compilación tarda unos minutos.
+6. Al terminar te dará tu dirección, tipo `https://alemanart.TU-USUARIO.workers.dev`.
    **Ese es tu sitio.** Cada cambio futuro se publica solo en esa misma dirección.
-
----
 
 ## Parte 3 — Entrar al panel por primera vez
 
-1. Ve a `https://alemanart.pages.dev/admin` (con tu dirección real).
-2. Haz clic en **Sign in with GitHub** e ingresa un **token**:
-   - El panel te mostrará la opción "Sign in with Token" con un enlace directo a
-     GitHub que ya trae los permisos correctos preseleccionados.
-   - En esa página de GitHub: ponle un nombre al token (ej. "Panel AlemanArt"), elige
-     expiración "No expiration" (o 1 año), botón verde **Generate token**.
+1. Ve a `https://alemanart.TU-USUARIO.workers.dev/admin` (con tu dirección real).
+
+2. ⚠️ **No uses el botón "Sign in with GitHub"** todavía. Ese botón intenta pasar por
+   Netlify (un rodeo que el panel trae de fábrica) y como tu sitio no está en Netlify,
+   dará el error **"Not Found"**. Para que ese botón funcione hace falta completar la
+   Parte 4, que es opcional.
+
+3. En su lugar, usa **"Sign in with Token"** (aparece como opción o enlace en la misma
+   pantalla de acceso):
+   - El panel te mostrará un enlace directo a GitHub con los permisos ya
+     preseleccionados. Ábrelo.
+   - En GitHub: ponle un nombre al token (ej. "Panel AlemanArt"), elige expiración
+     "No expiration" (o 1 año), y botón verde **Generate token**.
    - Copia el código que aparece (empieza con `ghp_...`), pégalo en el panel y entra.
-   - Guarda ese código en un lugar seguro (una nota protegida): es tu llave de acceso.
-3. ¡Dentro! Verás la colección **Galería de fotos** con las 54 fotos actuales.
+   - 🔑 Guarda ese código en un lugar seguro (una nota protegida con contraseña): es
+     tu llave de acceso. GitHub no vuelve a mostrártelo.
 
-> 🔑 Si prefieres entrar con un solo clic (sin token), la Parte 4 explica cómo —
-> es opcional y puedes hacerla en cualquier momento, o nunca.
-
----
+4. ¡Dentro! Verás la colección **Fotos del sitio** con las 54 fotos actuales, cada una
+   con su miniatura.
 
 ## Parte 4 (opcional) — Inicio de sesión de un solo clic
 
@@ -90,7 +96,7 @@ Esto reemplaza el token por un botón "Entrar con GitHub" de un clic. Toma ~15 m
 2. En GitHub: tu foto (arriba a la derecha) → **Settings** → al final del menú
    izquierdo **Developer settings** → **OAuth Apps** → **New OAuth App**:
    - Application name: `Panel AlemanArt`
-   - Homepage URL: `https://alemanart.pages.dev`
+   - Homepage URL: `https://alemanart.TU-USUARIO.workers.dev`
    - Authorization callback URL: la dirección del paso 1 **+ `/callback`**
      (ej. `https://sveltia-cms-auth.TUNOMBRE.workers.dev/callback`)
    - **Register application** → **Generate a new client secret**.
@@ -99,7 +105,8 @@ Esto reemplaza el token por un botón "Entrar con GitHub" de un clic. Toma ~15 m
    **Variables** → agrega:
    - `GITHUB_CLIENT_ID` = el Client ID del paso 2
    - `GITHUB_CLIENT_SECRET` = el Client Secret del paso 2
-   - `ALLOWED_DOMAINS` = `alemanart.pages.dev` (tu dirección, sin https://)
+   - `ALLOWED_DOMAINS` = tu dirección del sitio sin `https://`
+     (ej. `alemanart.TU-USUARIO.workers.dev`)
    - Guarda y vuelve a desplegar (**Deploy**).
 4. En GitHub, edita `public/admin/config.yml` (como en la Parte 1) y en la línea
    `# base_url: ...` quita el `#` del inicio y pon tu dirección del paso 1.
@@ -111,22 +118,25 @@ Esto reemplaza el token por un botón "Entrar con GitHub" de un clic. Toma ~15 m
 ## Parte 5 — Tu día a día con el panel ⭐
 
 **Agregar una foto:**
-1. Entra a `/admin` → **Galería de fotos** → botón **New Foto** (o **+**).
-2. Escribe un título corto (ej. "XV de Andrea"), elige la **categoría**, y en
-   **Fotografía** sube la imagen desde tu dispositivo.
-3. La **fecha** se llena sola con el momento actual — eso hace que la foto aparezca
-   de primera en su categoría. (Si quieres que aparezca más abajo, ponle una fecha
-   más antigua.)
-4. Botón **Save** (Guardar). En ~2 minutos está en línea.
+1. Entra a `/admin` → **Fotos del sitio** → botón **+** (o "New Foto").
+2. **Fotografía:** arrastra la imagen o haz clic para elegirla.
+3. **Título:** un nombre corto (ej. "XV de Andrea").
+4. **Categoría:** elige dónde aparece en el sitio.
+5. **Fecha:** se llena sola con el momento actual — eso hace que la foto aparezca de
+   primera en su categoría. (Si la quieres más abajo, ponle una fecha más antigua.)
+6. Botón **Save** (Guardar). En ~2 minutos está en línea.
 
-**Cambiar una foto por otra:** abre la ficha de la foto → en Fotografía sube la nueva
-imagen → Save. El título, categoría y posición se conservan.
+**Cambiar una foto por otra:** abre la ficha → en Fotografía elige la nueva imagen →
+Save. El título, la categoría y la posición se conservan.
 
 **Eliminar una foto:** ábrela → botón **Delete entry** → confirmar.
 
+**Buscar y filtrar:** el panel tiene filtros por categoría y puedes ordenar por fecha,
+título o categoría. Por defecto se ven las más nuevas primero, igual que en el sitio.
+
 **Subir varias fotos de una sesión:** repite "Agregar" para cada una. Cada guardado
-dispara una publicación (1 de las 500 mensuales gratis) — incluso subiendo 20 fotos
-en una tarde estás lejos del límite.
+dispara una publicación (1 de las 500 mensuales gratis) — incluso subiendo 20 fotos en
+una tarde estás lejos del límite.
 
 **Qué se actualiza solo con cada cambio:**
 - El collage principal (siempre muestra las más recientes, alternando categorías)
@@ -135,12 +145,13 @@ en una tarde estás lejos del límite.
 
 **Qué NO se toca desde el panel** (a propósito, para que nunca se rompa):
 - La foto grande del inicio (hero), el logo y las fotos de "¿Quién es AlemanArt?" —
-  esas están fijas en `src/assets/marca/`. Si algún día quieres cambiarlas, pídemelo
-  o reemplaza el archivo del mismo nombre en esa carpeta desde GitHub.
-
----
+  esas están fijas en `src/assets/marca/`. Si algún día quieres cambiarlas, pídemelo o
+  reemplaza el archivo del mismo nombre en esa carpeta desde GitHub.
 
 ## Preguntas frecuentes
+
+**Me sale "Not Found" al entrar al panel.** Estás usando el botón "Sign in with
+GitHub", que necesita la Parte 4 para funcionar. Usa **"Sign in with Token"** (Parte 3).
 
 **¿Cuánto tarda en verse un cambio?** Entre 1 y 3 minutos (lo que tarda la
 compilación en Cloudflare). Puedes ver el progreso en Workers & Pages → alemanart.
