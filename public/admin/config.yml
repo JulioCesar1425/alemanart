@@ -8,10 +8,9 @@
 
 backend:
   name: github
-  repo: JulioCesar1425/alemanart # ← CAMBIAR ESTO
+  repo: JulioCesar1425/alemanart
   branch: main
-  
- commit_messages:
+  commit_messages:
     create: 'Nueva foto: {{slug}}'
     update: 'Foto actualizada: {{slug}}'
     delete: 'Foto eliminada: {{slug}}'
@@ -64,12 +63,10 @@ collections:
         name: imagen
         widget: image
         hint: 'Arrastra la foto aquí o haz clic para elegirla. Recomendado: máximo 1800px de lado largo.'
-
       - label: Título
         name: titulo
         widget: string
         hint: 'Nombre corto para identificarla. Ejemplo: Boda de María y José'
-
       - label: Categoría
         name: categoria
         widget: select
@@ -80,10 +77,11 @@ collections:
           - { label: 'Celebraciones (XV y cumpleaños)', value: celebraciones }
           - { label: 'Graduaciones', value: graduacion }
           - { label: 'Sesiones casuales', value: sesiones-casuales }
-
       - label: Fecha
         name: fecha
         widget: datetime
         default: ''
+        picker_utc: false
+        hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
         picker_utc: false
         hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
