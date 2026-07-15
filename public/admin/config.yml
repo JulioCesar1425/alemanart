@@ -8,7 +8,7 @@
 
 backend:
   name: github
-  repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
+  repo: JulioCesar1425/alemanart # ← CAMBIAR ESTO
   branch: main
   commit_messages:
     create: 'Nueva foto: {{slug}}'
