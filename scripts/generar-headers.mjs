@@ -103,6 +103,7 @@ const contenido = `# Generado autom√°ticamente por scripts/generar-headers.mjs ‚
   ! Cross-Origin-Resource-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com ${[...hashesAdmin].join(' ')}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' blob: data: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://github.com
   X-Robots-Tag: noindex
+  Cache-Control: no-store
 
 # Los assets llevan hash en el nombre: se cachean para siempre (mejora el rendimiento).
 /_astro/*

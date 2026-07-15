@@ -38,9 +38,13 @@ const resolver = (ruta: string): ImageMetadata | null => {
   return archivos[clave]?.default ?? null;
 };
 
+// Ajustes generales (video de la galería), editables desde /admin
+const ajustesGenerales = (await getCollection('ajustes'))[0];
+
 // Fichas de la galería (administradas desde /admin), más recientes primero.
+// Las marcadas como no visibles se omiten por completo.
 const entradas = (await getCollection('galeria'))
-  .filter((e) => e.data.categoria in categorias)
+  .filter((e) => e.data.categoria in categorias && e.data.visible !== false)
   .sort((a, b) => b.data.fecha.valueOf() - a.data.fecha.valueOf());
 
 type Foto = {
@@ -51,7 +55,9 @@ type Foto = {
   ancho: number;
   alto: number;
   alt: string;
-  posicionCollage?: number;
+  posicionCollage?: 'no' | number;
+  ordenCategoria?: number;
+  enPortadaCategoria: boolean;
 };
 
 // Anchos para srcset: cubren pantallas retina (2x) de todos los contenedores del sitio.
@@ -80,12 +86,24 @@ for (const e of entradas) {
     ancho: meta.width,
     alto: meta.height,
     alt: `${categorias[e.data.categoria].alt} — ${e.data.titulo}`,
-    posicionCollage: e.data.posicionCollage,
+    posicionCollage: e.data.posicionCollage as 'no' | number | undefined,
+    ordenCategoria: e.data.ordenCategoria,
+    enPortadaCategoria: e.data.enPortadaCategoria,
   });
 }
 
 const porCategoria: Record<string, Foto[]> = {};
-for (const f of fotos) (porCategoria[f.cat] ??= []).push(f); // conserva el orden (desc)
+for (const f of fotos) (porCategoria[f.cat] ??= []).push(f); // orden por fecha (desc)
+
+// Orden dentro de cada categoría: primero las que tienen número asignado desde el
+// panel (1 = primera); las demás quedan detrás, por fecha (más recientes primero).
+for (const cat of Object.keys(porCategoria)) {
+  porCategoria[cat].sort((a, b) => {
+    const oa = a.ordenCategoria ?? Infinity;
+    const ob = b.ordenCategoria ?? Infinity;
+    return oa - ob; // Array.sort es estable: empates conservan el orden por fecha
+  });
+}
 
 // Collage: mosaico de teselado exacto (sin huecos).
 // Móvil: 2 columnas x 12 filas. Escritorio: 4 columnas x 6 filas.
@@ -118,7 +136,7 @@ const slots: (Foto | null)[] = new Array(POSICIONES.length).fill(null);
 //    reciente y se avisa en el log del build (no rompe nada).
 for (const f of fotos) {
   const p = f.posicionCollage;
-  if (!p || p < 1 || p > POSICIONES.length) continue;
+  if (typeof p !== 'number' || p < 1 || p > POSICIONES.length) continue;
   const i = p - 1;
   if (slots[i] && slots[i]!.id !== f.id) {
     console.warn(
@@ -129,12 +147,17 @@ for (const f of fotos) {
   slots[i] = f;
 }
 
-// 2) Relleno automático del resto, excluyendo fotos ya colocadas a mano.
+// 2) Relleno automático del resto. Se excluyen las ya colocadas a mano y las que
+//    el panel marcó como "No incluir en el collage".
 const yaColocadas = new Set(slots.filter(Boolean).map((f) => f!.id));
 const colas: Record<string, Foto[]> = Object.fromEntries(
-  ordenCats.map((c) => [c, (porCategoria[c] ?? []).filter((f) => !yaColocadas.has(f.id))])
+  ordenCats.map((c) => [
+    c,
+    (porCategoria[c] ?? []).filter(
+      (f) => !yaColocadas.has(f.id) && f.posicionCollage !== 'no'
+    ),
+  ])
 );
-let cursor = 0;
 const huecos = () => slots.map((s, i) => (s ? -1 : i)).filter((i) => i !== -1);
 while (huecos().length > 0) {
   let agrego = false;
@@ -155,19 +178,22 @@ const collage = slots
   .filter((c): c is { foto: Foto } & (typeof POSICIONES)[number] => c !== null);
 const seleccion = collage.map((c) => c.foto);
 
-// Portadas rotativas: las 3 más recientes de cada categoría,
-// prefiriendo las que no aparecen ya en el collage.
+// Portadas rotativas de cada tarjeta: primero las marcadas a mano en el panel,
+// luego se completan hasta 3 con las que no estén ya en el collage.
 const usadas = new Set(seleccion.map((f) => f.id));
 const portadas: Record<string, Foto[]> = {};
 for (const c of ordenCats) {
   const deCat = porCategoria[c] ?? [];
-  const libres = deCat.filter((f) => !usadas.has(f.id));
-  portadas[c] = [...libres, ...deCat.filter((f) => usadas.has(f.id))].slice(0, 3);
+  const marcadas = deCat.filter((f) => f.enPortadaCategoria);
+  const resto = deCat.filter((f) => !f.enPortadaCategoria);
+  const libres = resto.filter((f) => !usadas.has(f.id));
+  const enCollage = resto.filter((f) => usadas.has(f.id));
+  portadas[c] = [...marcadas, ...libres, ...enCollage].slice(0, 3);
 }
 
 // Solo se muestran categorías que tienen al menos una foto.
 const claves = ordenCats.filter((c) => (porCategoria[c] ?? []).length > 0);
-const VIDEO_ID = 'fok4ZSQ71qg';
+const VIDEO_ID = ajustesGenerales?.data.videoGaleriaYouTube ?? '';
 ---
 
 <section id="galeria" class="scroll-mt-20 bg-white py-16 md:py-24">
@@ -304,8 +330,7 @@ const VIDEO_ID = 'fok4ZSQ71qg';
             class="panel-grid pswp-galeria mt-6 hidden columns-2 gap-3 md:columns-3 [&>a]:mb-3"
             data-cat={c}
           >
-            {fotos
-              .filter((f) => f.cat === c)
+            {(porCategoria[c] ?? [])
               .map((f) => (
                 <a
                   href={f.grande.src}

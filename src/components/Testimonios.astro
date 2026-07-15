@@ -1,5 +1,11 @@
 ---
-import data from '../data/testimonios.json';
+import { getCollection } from 'astro:content';
+
+// Opiniones editables desde /admin. Las ocultas no se muestran.
+const testimonios = (await getCollection('testimonios'))
+  .filter((t) => t.data.visible !== false)
+  .sort((a, b) => (a.data.orden ?? Infinity) - (b.data.orden ?? Infinity))
+  .map((t) => t.data);
 ---
 
 <section id="opiniones" class="brand-wash scroll-mt-20 py-16 md:py-24">
@@ -9,7 +15,7 @@ import data from '../data/testimonios.json';
     <div class="swiper mt-10" id="swiper-testimonios">
       <div class="swiper-wrapper">
         {
-          data.testimonios.map((t) => (
+          testimonios.map((t) => (
             <div class="swiper-slide px-2 pb-12">
               <figure class="mx-auto max-w-2xl rounded-2xl border border-tinta/10 bg-white p-6 shadow-sm sm:p-8">
                 <svg

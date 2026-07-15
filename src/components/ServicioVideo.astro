@@ -1,6 +1,10 @@
 ---
-import paquetes from '../data/paquetes.json';
-import media from '../data/testimonios.json';
+import { getCollection } from 'astro:content';
+
+// Servicios y reels editables desde /admin
+const ajustes = (await getCollection('ajustes'))[0]?.data;
+const servicios = ajustes?.servicioVideo ?? [];
+const reels = ajustes?.reelsVimeo ?? [];
 ---
 
 <section id="video" class="brand-wash scroll-mt-20 py-16 md:py-24">
@@ -13,7 +17,7 @@ import media from '../data/testimonios.json';
       </p>
       <ul class="mt-7 space-y-3.5">
         {
-          paquetes.video.map((v) => (
+          servicios.map((v) => (
             <li class="flex items-center gap-3 text-tinta-suave">
               <svg
                 class="h-5 w-5 shrink-0 text-coral"
@@ -32,7 +36,7 @@ import media from '../data/testimonios.json';
 
     <div class="grid grid-cols-2 gap-4">
       {
-        media.videos.map((v) => (
+        reels.map((v) => (
           <div class="overflow-hidden rounded-2xl border border-tinta/10 bg-tinta shadow-lg">
             <iframe
               src={`https://player.vimeo.com/video/${v.id}?title=0&byline=0&portrait=0&dnt=1`}

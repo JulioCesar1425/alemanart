@@ -138,23 +138,43 @@ título o categoría. Por defecto se ven las más nuevas primero, igual que en e
 dispara una publicación (1 de las 500 mensuales gratis) — incluso subiendo 20 fotos en
 una tarde estás lejos del límite.
 
-**Elegir dónde va cada foto en el collage principal (opcional):**
-El collage de la portada tiene 10 casilleros de distinto tamaño. Por defecto se
-llenan solos con las fotos más recientes, pero si quieres que una foto en
-particular quede siempre en un lugar específico (por ejemplo, tu mejor toma de
-una boda en la casilla grande de arriba a la izquierda):
-1. Abre la ficha de esa foto en el panel.
-2. En **"Posición en el collage principal"**, elige el número de casillero
-   (cada opción trae una pista de dónde queda, ej. "1 · La foto grande de arriba
-   a la izquierda").
-3. Guarda. Las demás fotos se siguen acomodando automáticamente alrededor.
+**Controlar dónde aparece cada foto (todo opcional):**
+Al final de la ficha de cada foto hay cuatro interruptores. Si no los tocas, el
+sitio decide todo solo — solo úsalos cuando quieras mandar tú.
 
-Si sin querer le pides el mismo casillero a dos fotos distintas, gana la más
-nueva — no rompe nada, simplemente una de las dos queda sin ese lugar fijo (pero
-sigue apareciendo en su galería de categoría con normalidad). En celular el
-mosaico se reacomoda un poco distinto al de escritorio para que no queden
-espacios en blanco, así que la posición exacta puede variar levemente entre
-dispositivos.
+- **Mostrar en el sitio.** Apágalo para dejar una foto preparada (con su título y
+  categoría) sin publicarla todavía. Útil si te llegan fotos editadas antes de
+  querer anunciar la sesión. Enciéndelo cuando quieras que aparezca.
+
+- **Posición en el collage principal.** El collage de la portada tiene 10
+  casilleros. Elige un número para fijar ESA foto ahí (cada opción dice dónde
+  queda, ej. "1 · La foto grande de arriba a la izquierda"). Elige **"No incluir
+  en el collage"** si la foto solo debe salir en su categoría y no en la portada.
+  Déjalo en "Automática" y el sitio elige entre las más recientes.
+
+- **Mostrar en la portada de su categoría.** Cada tarjeta de categoría muestra 3
+  fotos que van rotando. Enciéndelo para que esta sea una de ellas.
+
+- **Orden dentro de su categoría.** Pon 1 para que sea la primera al abrir la
+  galería de su categoría. Vacío = se ordena sola por fecha.
+
+Si sin querer le pides el mismo casillero del collage a dos fotos, gana la más
+nueva — no se rompe nada. En celular el mosaico se reacomoda un poco distinto al
+de escritorio para no dejar espacios en blanco, así que la posición exacta puede
+variar levemente entre dispositivos.
+
+**Cambiar opiniones, precios o videos:**
+En el menú de la izquierda hay cuatro secciones, no solo fotos:
+- **Fotos del sitio** — la galería.
+- **Opiniones de clientes** — el carrusel de testimonios. Agrega uno nuevo cuando
+  un cliente te escriba algo bonito; el campo "Orden" decide cuál va primero.
+- **Paquetes y precios** — los 6 paquetes. Puedes cambiar el precio, agregar o
+  quitar puntos de "Qué incluye", mover cuál lleva el sello "Más elegido", o
+  apagar uno temporalmente con "Mostrar en el sitio".
+- **Videos y extras** — el video de la galería (YouTube), los reels verticales
+  (Vimeo), la lista de extras y la de servicios de video. Para los videos solo se
+  pega el **código**, no el enlace completo: en `vimeo.com/1206869354` el código
+  es `1206869354`.
 
 **Qué se actualiza solo con cada cambio:**
 - El collage principal (siempre muestra las más recientes, alternando categorías)

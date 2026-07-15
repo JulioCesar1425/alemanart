@@ -44,9 +44,14 @@ src/
 - **Nueva categoría**: agregarla al objeto `categorias` de
   `src/components/Galeria.astro` y a las opciones del campo `categoria` en
   `public/admin/config.yml`.
-- **Posición manual en el collage principal**: campo opcional `posicionCollage`
-  (1-10) en cada ficha, elegible desde `/admin`. Las posiciones sin asignar se
-  llenan automáticamente con las fotos más recientes. Ver `GUIA-PANEL.md`.
+- **Control manual de la galería** (todo opcional, desde `/admin`):
+  `visible` (publicar/despublicar sin borrar), `posicionCollage` (1-10 fija un
+  casillero; `no` excluye del collage), `ordenCategoria` (1 = primera en su
+  categoría) y `enPortadaCategoria` (fuerza que salga en la tarjeta rotativa).
+  Lo que se deja vacío se resuelve automáticamente por fecha.
+- **Opiniones, paquetes y videos**: viven en `src/content/testimonios/`,
+  `src/content/paquetes/` y `src/data/ajustes.json`, todos editables desde
+  `/admin` sin tocar código.
 - **Número de WhatsApp**: buscar `50375878108` (aparece en Layout, Hero,
   Paquetes y Contacto).
 

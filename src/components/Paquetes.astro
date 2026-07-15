@@ -1,5 +1,19 @@
 ---
-import data from '../data/paquetes.json';
+import { getCollection } from 'astro:content';
+
+// Paquetes y extras editables desde /admin
+const todos = (await getCollection('paquetes')).filter((p) => p.data.visible !== false);
+const porTipo = (tipo: 'eventos' | 'casuales') =>
+  todos
+    .filter((p) => p.data.tipo === tipo)
+    .sort((a, b) => a.data.orden - b.data.orden)
+    .map((p) => p.data);
+
+const data = {
+  eventos: porTipo('eventos'),
+  casuales: porTipo('casuales'),
+  extras: (await getCollection('ajustes'))[0]?.data.extras ?? [],
+};
 
 const wa = (paquete: string, tipo: string) =>
   'https://wa.me/50375878108?text=' +

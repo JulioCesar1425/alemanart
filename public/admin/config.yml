@@ -2,10 +2,13 @@
 #
 # Configuración del panel de fotos de AlemanArt
 # ─────────────────────────────────────────────────────────────
+# ÚNICO CAMBIO OBLIGATORIO: en "repo", reemplaza TU-USUARIO por
+# tu nombre de usuario de GitHub (y "alemanart" por el nombre del
+# repositorio, si usaste otro).
 
 backend:
   name: github
-  repo: JulioCesar1425/alemanart
+  repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
   branch: main
   commit_messages:
     create: 'Nueva foto: {{slug}}'
@@ -13,7 +16,8 @@ backend:
     delete: 'Foto eliminada: {{slug}}'
     uploadMedia: 'Imagen subida: {{path}}'
     deleteMedia: 'Imagen eliminada: {{path}}'
-  # Inicio de sesión con un clic (Parte 4, ya configurado):
+  # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4).
+  # Sin esto, se entra con un token personal de GitHub ("Sign in with Token").
   base_url: https://sveltia-cms-auth.photoography.workers.dev
 
 # Todas las fotos viven en una sola carpeta. La categoría la define
@@ -56,10 +60,12 @@ collections:
         name: imagen
         widget: image
         hint: 'Arrastra la foto aquí o haz clic para elegirla. Recomendado: máximo 1800px de lado largo.'
+
       - label: Título
         name: titulo
         widget: string
         hint: 'Nombre corto para identificarla. Ejemplo: Boda de María y José'
+
       - label: Categoría
         name: categoria
         widget: select
@@ -70,25 +76,34 @@ collections:
           - { label: 'Celebraciones (XV y cumpleaños)', value: celebraciones }
           - { label: 'Graduaciones', value: graduacion }
           - { label: 'Sesiones casuales', value: sesiones-casuales }
+
       - label: Fecha
         name: fecha
         widget: datetime
         default: ''
         picker_utc: false
         hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
-        
+
+      - label: Mostrar en el sitio
+        name: visible
+        widget: boolean
+        default: true
+        hint: >-
+          Apágalo para dejar la foto preparada sin publicarla todavía. Cuando lo
+          enciendas, aparecerá en el sitio en el siguiente par de minutos.
+
       - label: Posición en el collage principal
         name: posicionCollage
         widget: select
         required: false
         hint: >-
-          Opcional. El collage de la portada tiene 10 casilleros. Elige uno para
-          que ESTA foto aparezca siempre ahí. Si dos fotos piden el mismo
-          casillero, se muestra la más nueva. Si lo dejas en "Automática", el
-          sitio elige sola entre las fotos más recientes. En celular el orden se
-          reacomoda un poco para que no queden espacios en blanco.
+          Opcional. El collage de la portada tiene 10 casilleros. Elige "No
+          incluir" si esta foto solo debe salir en su categoría. Si dos fotos
+          piden el mismo casillero, se muestra la más nueva. En celular el
+          mosaico se reacomoda para no dejar espacios en blanco.
         options:
           - { label: 'Automática (recomendado)', value: '' }
+          - { label: 'No incluir en el collage (solo en su categoría)', value: 'no' }
           - { label: '1 · La foto grande de arriba a la izquierda', value: '1' }
           - { label: '2 · Arriba, columna central-derecha', value: '2' }
           - { label: '3 · Arriba del todo, extremo derecho', value: '3' }
@@ -99,3 +114,179 @@ collections:
           - { label: '8 · Izquierda, parte baja', value: '8' }
           - { label: '9 · Abajo, columna central', value: '9' }
           - { label: '10 · Abajo del todo, extremo derecho', value: '10' }
+
+      - label: Mostrar en la portada de su categoría
+        name: enPortadaCategoria
+        widget: boolean
+        default: false
+        hint: >-
+          Cada tarjeta de categoría muestra 3 fotos que van rotando. Enciéndelo
+          para que ESTA foto sea una de ellas. Si marcas más de 3 en la misma
+          categoría, se usan las 3 primeras por orden.
+
+      - label: Orden dentro de su categoría
+        name: ordenCategoria
+        widget: number
+        required: false
+        value_type: int
+        min: 1
+        hint: >-
+          Opcional. 1 = aparece de primera al abrir la galería de su categoría.
+          Déjalo vacío para que se ordene sola por fecha (más nuevas primero).
+
+  # ─────────────────────────────────────────────────────────────
+  - name: testimonios
+    label: Opiniones de clientes
+    label_singular: Opinión
+    icon: reviews
+    description: >-
+      Lo que dicen tus clientes. Aparecen en el carrusel de la sección
+      "Opiniones", que va cambiando solo.
+    folder: src/content/testimonios
+    create: true
+    delete: true
+    format: yaml-frontmatter
+    extension: md
+    slug: '{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}'
+    summary: '{{autor}} — {{texto}}'
+    sortable_fields:
+      fields: [orden, autor]
+      default:
+        field: orden
+        direction: ascending
+    fields:
+      - label: Opinión
+        name: texto
+        widget: text
+        hint: 'Lo que escribió el cliente. Sin comillas: se agregan solas.'
+      - label: Quién lo dice
+        name: autor
+        widget: string
+        hint: 'Nombre real si lo autorizó, o algo como "Cliente de boda".'
+      - label: Mostrar en el sitio
+        name: visible
+        widget: boolean
+        default: true
+      - label: Orden
+        name: orden
+        widget: number
+        required: false
+        value_type: int
+        min: 1
+        hint: '1 = se muestra de primera en el carrusel. Vacío = al final.'
+
+  # ─────────────────────────────────────────────────────────────
+  - name: paquetes
+    label: Paquetes y precios
+    label_singular: Paquete
+    icon: sell
+    description: >-
+      Los paquetes que se muestran en la sección "Paquetes". Cambia precios,
+      qué incluye cada uno, o cuál va marcado como "Más elegido".
+    folder: src/content/paquetes
+    create: true
+    delete: true
+    format: yaml-frontmatter
+    extension: md
+    slug: '{{fields.tipo}}-{{fields.orden}}'
+    summary: '{{nombre}} · {{precio}} ({{tipo}})'
+    sortable_fields:
+      fields: [tipo, orden, nombre]
+      default:
+        field: orden
+        direction: ascending
+    view_groups:
+      groups:
+        - { label: 'Tipo', field: tipo }
+    fields:
+      - label: Nombre
+        name: nombre
+        widget: string
+        hint: 'Ejemplo: Paquete 1'
+      - label: Precio
+        name: precio
+        widget: string
+        hint: 'Escríbelo tal como debe verse. Ejemplo: $180'
+      - label: Tipo
+        name: tipo
+        widget: select
+        default: eventos
+        hint: 'En qué pestaña de la sección "Paquetes" aparece.'
+        options:
+          - { label: 'Eventos (bodas, XV, graduaciones…)', value: eventos }
+          - { label: 'Sesiones casuales', value: casuales }
+      - label: Orden
+        name: orden
+        widget: number
+        value_type: int
+        min: 1
+        default: 1
+        hint: '1 = se muestra de primero dentro de su tipo.'
+      - label: Marcar como "Más elegido"
+        name: destacado
+        widget: boolean
+        default: false
+        hint: 'Lo resalta con borde de color. Usa solo uno por tipo.'
+      - label: Qué incluye
+        name: items
+        widget: list
+        allow_add: true
+        summary: '{{fields.item}}'
+        field: { label: 'Punto', name: item, widget: string }
+        hint: 'Un punto por línea. Puedes arrastrarlos para reordenar.'
+      - label: Nota especial
+        name: nota
+        widget: string
+        required: false
+        hint: >-
+          Opcional. Aparece resaltada en un recuadro. Úsala para condiciones,
+          ejemplo: "Aplica para Berlín, Alegría y Santiago de María".
+      - label: Mostrar en el sitio
+        name: visible
+        widget: boolean
+        default: true
+
+  # ─────────────────────────────────────────────────────────────
+  - name: ajustes
+    label: Videos y extras
+    icon: settings
+    description: 'Videos del sitio, lista de extras y servicios de video.'
+    files:
+      - name: general
+        label: Videos, extras y servicios
+        file: src/data/ajustes.json
+        fields:
+          - label: Video de la galería (YouTube)
+            name: videoGaleriaYouTube
+            widget: string
+            hint: >-
+              Solo el código del video, no el enlace completo. En
+              youtube.com/watch?v=ABC123 el código es ABC123.
+          - label: Reels (Vimeo)
+            name: reelsVimeo
+            widget: list
+            allow_add: true
+            summary: '{{fields.titulo}} ({{fields.id}})'
+            hint: 'Los videos verticales de la sección "Servicio de video".'
+            fields:
+              - label: Código del video
+                name: id
+                widget: string
+                hint: 'En vimeo.com/1206869354 el código es 1206869354.'
+              - label: Título
+                name: titulo
+                widget: string
+          - label: Lista de extras
+            name: extras
+            widget: list
+            allow_add: true
+            summary: '{{fields.item}}'
+            field: { label: 'Extra', name: item, widget: string }
+            hint: 'Aparecen en el recuadro "Extras para tu evento".'
+          - label: Servicios de video
+            name: servicioVideo
+            widget: list
+            allow_add: true
+            summary: '{{fields.item}}'
+            field: { label: 'Servicio', name: item, widget: string }
+            hint: 'La lista de la sección "Servicio de video".'
