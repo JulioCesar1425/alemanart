@@ -76,3 +76,26 @@ collections:
         default: ''
         picker_utc: false
         hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
+        
+      - label: Posición en el collage principal
+        name: posicionCollage
+        widget: select
+        required: false
+        hint: >-
+          Opcional. El collage de la portada tiene 10 casilleros. Elige uno para
+          que ESTA foto aparezca siempre ahí. Si dos fotos piden el mismo
+          casillero, se muestra la más nueva. Si lo dejas en "Automática", el
+          sitio elige sola entre las fotos más recientes. En celular el orden se
+          reacomoda un poco para que no queden espacios en blanco.
+        options:
+          - { label: 'Automática (recomendado)', value: '' }
+          - { label: '1 · La foto grande de arriba a la izquierda', value: '1' }
+          - { label: '2 · Arriba, columna central-derecha', value: '2' }
+          - { label: '3 · Arriba del todo, extremo derecho', value: '3' }
+          - { label: '4 · Franja izquierda, parte media', value: '4' }
+          - { label: '5 · Centro del mosaico', value: '5' }
+          - { label: '6 · Centro-derecha', value: '6' }
+          - { label: '7 · Derecha, parte media-baja', value: '7' }
+          - { label: '8 · Izquierda, parte baja', value: '8' }
+          - { label: '9 · Abajo, columna central', value: '9' }
+          - { label: '10 · Abajo del todo, extremo derecho', value: '10' }
