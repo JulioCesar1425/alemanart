@@ -6,6 +6,11 @@
 # tu nombre de usuario de GitHub (y "alemanart" por el nombre del
 # repositorio, si usaste otro).
 
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# Configuración del panel de fotos de AlemanArt
+# ─────────────────────────────────────────────────────────────
+
 backend:
   name: github
   repo: JulioCesar1425/alemanart
@@ -23,10 +28,6 @@ backend:
 # el campo "categoria" de cada ficha, no la carpeta.
 media_folder: src/assets/galeria/fotos
 public_folder: /src/assets/galeria/fotos
-
-# Vista de cuadrícula con miniaturas grandes por defecto
-media_library:
-  folder_support: false
 
 collections:
   - name: galeria
@@ -81,7 +82,5 @@ collections:
         name: fecha
         widget: datetime
         default: ''
-        picker_utc: false
-        hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
         picker_utc: false
         hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'

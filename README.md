@@ -92,9 +92,18 @@ categoría se recalculan solos en cada build (más recientes primero, por el cam
 `fecha`). Una ficha que apunte a una imagen inexistente se omite con un aviso en
 el log — nunca rompe el build.
 
-Configuración completa paso a paso (GitHub + Cloudflare Pages + panel): ver
+Configuración completa paso a paso (GitHub + Cloudflare + panel): ver
 **GUIA-PANEL.md**. Requisito único antes de usar: editar `repo:` en
 `public/admin/config.yml`.
+
+`npm run build` valida primero `public/admin/config.yml` con
+`scripts/validar-config-panel.mjs` y aborta si hay algo mal: marcadores de conflicto
+de Git sin resolver, sintaxis YAML inválida (indica la línea), u opciones que Sveltia
+no reconoce (se contrasta con el esquema oficial en
+`node_modules/@sveltia/cms/schema/`). Esto importa porque `config.yml` se copia tal
+cual al sitio: sin esta validación, un error no rompe el build sino el panel en vivo,
+con el mensaje poco útil "The configuration file could not be parsed". Para validarlo
+suelto: `npm run validar-panel`.
 
 Nota: la regla `/admin/*` de `dist/_headers` usa la sintaxis de reemplazo de
 cabeceras (`! Header`) de Cloudflare Pages; en otros hosts el panel podría quedar
