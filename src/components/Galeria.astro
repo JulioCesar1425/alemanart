@@ -51,6 +51,7 @@ type Foto = {
   ancho: number;
   alto: number;
   alt: string;
+  posicionCollage?: number;
 };
 
 // Anchos para srcset: cubren pantallas retina (2x) de todos los contenedores del sitio.
@@ -79,6 +80,7 @@ for (const e of entradas) {
     ancho: meta.width,
     alto: meta.height,
     alt: `${categorias[e.data.categoria].alt} — ${e.data.titulo}`,
+    posicionCollage: e.data.posicionCollage,
   });
 }
 
@@ -106,25 +108,52 @@ const POSICIONES = [
   { sizes: SIZES_NORMAL, pos: 'col-start-2 row-start-11 row-span-2 md:col-start-4 md:col-span-1 md:row-start-6 md:row-span-1' },
 ];
 
-// Selección automática: las fotos más recientes, alternando categorías para variedad.
+// Selección del collage: primero se respetan las posiciones manuales (elegidas
+// desde el panel), y el resto de casilleros se llena automáticamente con las
+// fotos más recientes, alternando categorías para variedad.
 const ordenCats = Object.keys(categorias);
+const slots: (Foto | null)[] = new Array(POSICIONES.length).fill(null);
+
+// 1) Posiciones manuales. Si dos fotos piden el mismo casillero, gana la más
+//    reciente y se avisa en el log del build (no rompe nada).
+for (const f of fotos) {
+  const p = f.posicionCollage;
+  if (!p || p < 1 || p > POSICIONES.length) continue;
+  const i = p - 1;
+  if (slots[i] && slots[i]!.id !== f.id) {
+    console.warn(
+      `[galeria] Dos fotos piden la posición ${p} del collage; se usa la más reciente.`
+    );
+    continue; // fotos está ordenado por fecha desc, así que la primera en llegar gana
+  }
+  slots[i] = f;
+}
+
+// 2) Relleno automático del resto, excluyendo fotos ya colocadas a mano.
+const yaColocadas = new Set(slots.filter(Boolean).map((f) => f!.id));
 const colas: Record<string, Foto[]> = Object.fromEntries(
-  ordenCats.map((c) => [c, [...(porCategoria[c] ?? [])]])
+  ordenCats.map((c) => [c, (porCategoria[c] ?? []).filter((f) => !yaColocadas.has(f.id))])
 );
-const seleccion: Foto[] = [];
-while (seleccion.length < POSICIONES.length) {
+let cursor = 0;
+const huecos = () => slots.map((s, i) => (s ? -1 : i)).filter((i) => i !== -1);
+while (huecos().length > 0) {
   let agrego = false;
   for (const c of ordenCats) {
-    if (seleccion.length >= POSICIONES.length) break;
+    const restantes = huecos();
+    if (restantes.length === 0) break;
     const f = colas[c].shift();
     if (f) {
-      seleccion.push(f);
+      slots[restantes[0]] = f;
       agrego = true;
     }
   }
-  if (!agrego) break; // no quedan fotos
+  if (!agrego) break; // no quedan fotos suficientes para llenar todos los casilleros
 }
-const collage = seleccion.map((foto, i) => ({ foto, ...POSICIONES[i] }));
+
+const collage = slots
+  .map((foto, i) => (foto ? { foto, ...POSICIONES[i] } : null))
+  .filter((c): c is { foto: Foto } & (typeof POSICIONES)[number] => c !== null);
+const seleccion = collage.map((c) => c.foto);
 
 // Portadas rotativas: las 3 más recientes de cada categoría,
 // prefiriendo las que no aparecen ya en el collage.

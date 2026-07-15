@@ -6,14 +6,9 @@
 # tu nombre de usuario de GitHub (y "alemanart" por el nombre del
 # repositorio, si usaste otro).
 
-# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
-#
-# Configuración del panel de fotos de AlemanArt
-# ─────────────────────────────────────────────────────────────
-
 backend:
   name: github
-  repo: JulioCesar1425/alemanart
+  repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
   branch: main
   commit_messages:
     create: 'Nueva foto: {{slug}}'
@@ -21,8 +16,9 @@ backend:
     delete: 'Foto eliminada: {{slug}}'
     uploadMedia: 'Imagen subida: {{path}}'
     deleteMedia: 'Imagen eliminada: {{path}}'
-  # Inicio de sesión con un clic (Parte 4, ya configurado):
-  base_url: https://sveltia-cms-auth.photoography.workers.dev
+  # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4).
+  # Sin esto, se entra con un token personal de GitHub ("Sign in with Token").
+  # base_url: https://sveltia-cms-auth.TU-SUBDOMINIO.workers.dev
 
 # Todas las fotos viven en una sola carpeta. La categoría la define
 # el campo "categoria" de cada ficha, no la carpeta.
@@ -64,10 +60,12 @@ collections:
         name: imagen
         widget: image
         hint: 'Arrastra la foto aquí o haz clic para elegirla. Recomendado: máximo 1800px de lado largo.'
+
       - label: Título
         name: titulo
         widget: string
         hint: 'Nombre corto para identificarla. Ejemplo: Boda de María y José'
+
       - label: Categoría
         name: categoria
         widget: select
@@ -78,9 +76,33 @@ collections:
           - { label: 'Celebraciones (XV y cumpleaños)', value: celebraciones }
           - { label: 'Graduaciones', value: graduacion }
           - { label: 'Sesiones casuales', value: sesiones-casuales }
+
       - label: Fecha
         name: fecha
         widget: datetime
         default: ''
         picker_utc: false
         hint: 'Define el orden: las más nuevas aparecen primero. Se llena sola.'
+
+      - label: Posición en el collage principal
+        name: posicionCollage
+        widget: select
+        required: false
+        hint: >-
+          Opcional. El collage de la portada tiene 10 casilleros. Elige uno para
+          que ESTA foto aparezca siempre ahí. Si dos fotos piden el mismo
+          casillero, se muestra la más nueva. Si lo dejas en "Automática", el
+          sitio elige sola entre las fotos más recientes. En celular el orden se
+          reacomoda un poco para que no queden espacios en blanco.
+        options:
+          - { label: 'Automática (recomendado)', value: '' }
+          - { label: '1 · La foto grande de arriba a la izquierda', value: '1' }
+          - { label: '2 · Arriba, columna central-derecha', value: '2' }
+          - { label: '3 · Arriba del todo, extremo derecho', value: '3' }
+          - { label: '4 · Franja izquierda, parte media', value: '4' }
+          - { label: '5 · Centro del mosaico', value: '5' }
+          - { label: '6 · Centro-derecha', value: '6' }
+          - { label: '7 · Derecha, parte media-baja', value: '7' }
+          - { label: '8 · Izquierda, parte baja', value: '8' }
+          - { label: '9 · Abajo, columna central', value: '9' }
+          - { label: '10 · Abajo del todo, extremo derecho', value: '10' }

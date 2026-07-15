@@ -13,6 +13,13 @@ const galeria = defineCollection({
     categoria: z.enum(['bodas', 'celebraciones', 'graduacion', 'sesiones-casuales']),
     imagen: z.string(),
     fecha: z.coerce.date(),
+    // Opcional: fija la foto en un casillero específico del collage principal (1-10).
+    // Si se omite (o llega vacío desde el panel), el sitio elige automáticamente
+    // entre las fotos más recientes.
+    posicionCollage: z.preprocess(
+      (v) => (v === '' || v === null || v === undefined ? undefined : v),
+      z.coerce.number().int().min(1).max(10).optional()
+    ),
   }),
 });
 

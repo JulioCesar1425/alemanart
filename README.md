@@ -44,6 +44,9 @@ src/
 - **Nueva categoría**: agregarla al objeto `categorias` de
   `src/components/Galeria.astro` y a las opciones del campo `categoria` en
   `public/admin/config.yml`.
+- **Posición manual en el collage principal**: campo opcional `posicionCollage`
+  (1-10) en cada ficha, elegible desde `/admin`. Las posiciones sin asignar se
+  llenan automáticamente con las fotos más recientes. Ver `GUIA-PANEL.md`.
 - **Número de WhatsApp**: buscar `50375878108` (aparece en Layout, Hero,
   Paquetes y Contacto).
 

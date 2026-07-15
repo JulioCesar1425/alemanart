@@ -138,6 +138,24 @@ título o categoría. Por defecto se ven las más nuevas primero, igual que en e
 dispara una publicación (1 de las 500 mensuales gratis) — incluso subiendo 20 fotos en
 una tarde estás lejos del límite.
 
+**Elegir dónde va cada foto en el collage principal (opcional):**
+El collage de la portada tiene 10 casilleros de distinto tamaño. Por defecto se
+llenan solos con las fotos más recientes, pero si quieres que una foto en
+particular quede siempre en un lugar específico (por ejemplo, tu mejor toma de
+una boda en la casilla grande de arriba a la izquierda):
+1. Abre la ficha de esa foto en el panel.
+2. En **"Posición en el collage principal"**, elige el número de casillero
+   (cada opción trae una pista de dónde queda, ej. "1 · La foto grande de arriba
+   a la izquierda").
+3. Guarda. Las demás fotos se siguen acomodando automáticamente alrededor.
+
+Si sin querer le pides el mismo casillero a dos fotos distintas, gana la más
+nueva — no rompe nada, simplemente una de las dos queda sin ese lugar fijo (pero
+sigue apareciendo en su galería de categoría con normalidad). En celular el
+mosaico se reacomoda un poco distinto al de escritorio para que no queden
+espacios en blanco, así que la posición exacta puede variar levemente entre
+dispositivos.
+
 **Qué se actualiza solo con cada cambio:**
 - El collage principal (siempre muestra las más recientes, alternando categorías)
 - Las 3 fotos que rotan en cada tarjeta de categoría
