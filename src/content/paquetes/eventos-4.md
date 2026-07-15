@@ -7,5 +7,5 @@ destacado: false
 items:
   - Fotos
 nota: Solo prueba
-visible: true
+visible: false
 ---
