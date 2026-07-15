@@ -8,17 +8,17 @@
 
 backend:
   name: github
-  repo: TU-USUARIO/alemanart # ← CAMBIAR ESTO
+  repo: JulioCesar1425/alemanart # ← CAMBIAR ESTO
   branch: main
-  commit_messages:
+  
+ commit_messages:
     create: 'Nueva foto: {{slug}}'
     update: 'Foto actualizada: {{slug}}'
     delete: 'Foto eliminada: {{slug}}'
     uploadMedia: 'Imagen subida: {{path}}'
     deleteMedia: 'Imagen eliminada: {{path}}'
-  # Para iniciar sesión con un clic (opcional, ver GUIA-PANEL.md, Parte 4).
-  # Sin esto, se entra con un token personal de GitHub ("Sign in with Token").
-  # base_url: https://sveltia-cms-auth.TU-SUBDOMINIO.workers.dev
+  # Inicio de sesión con un clic (Parte 4, ya configurado):
+  base_url: https://sveltia-cms-auth.photoography.workers.dev
 
 # Todas las fotos viven en una sola carpeta. La categoría la define
 # el campo "categoria" de cada ficha, no la carpeta.
