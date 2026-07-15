@@ -45,9 +45,13 @@ for (const pagina of paginas) {
   }
 }
 
-// Orígenes de terceros estrictamente necesarios (solo los reproductores de video).
+// Orígenes de terceros estrictamente necesarios.
 const YOUTUBE = 'https://www.youtube-nocookie.com https://www.youtube.com';
 const VIMEO = 'https://player.vimeo.com';
+// Analítica de Cloudflare (sin cookies). Se permite tanto si el beacon se añade
+// desde el código como si Cloudflare lo inyecta solo al activarlo en su panel.
+const CF_ANALYTICS_SCRIPT = 'https://static.cloudflareinsights.com';
+const CF_ANALYTICS_CONNECT = 'https://cloudflareinsights.com';
 
 const csp = [
   `default-src 'self'`,
@@ -60,8 +64,8 @@ const csp = [
   // Swiper y PhotoSwipe escriben estilos en línea para animar; 'unsafe-inline' aquí
   // es de bajo riesgo (no ejecuta código) y evita romper los carruseles.
   `style-src 'self' 'unsafe-inline'`,
-  `script-src 'self' ${[...hashes].join(' ')}`,
-  `connect-src 'self'`,
+  `script-src 'self' ${CF_ANALYTICS_SCRIPT} ${[...hashes].join(' ')}`,
+  `connect-src 'self' ${CF_ANALYTICS_CONNECT}`,
   `media-src 'self'`,
   `manifest-src 'self'`,
   `worker-src 'none'`,

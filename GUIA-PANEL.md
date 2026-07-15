@@ -119,7 +119,9 @@ Esto reemplaza el token por un botón "Entrar con GitHub" de un clic. Toma ~15 m
 
 **Agregar una foto:**
 1. Entra a `/admin` → **Fotos del sitio** → botón **+** (o "New Foto").
-2. **Fotografía:** arrastra la imagen o haz clic para elegirla.
+2. **Fotografía:** arrastra la imagen o haz clic para elegirla. Puedes subirla
+   tal cual sale de la cámara — el panel la comprime y la reduce a 1800px en tu
+   navegador antes de subirla, así que no tienes que redimensionar nada a mano.
 3. **Título:** un nombre corto (ej. "XV de Andrea").
 4. **Categoría:** elige dónde aparece en el sitio.
 5. **Fecha:** se llena sola con el momento actual — eso hace que la foto aparezca de
@@ -185,6 +187,30 @@ En el menú de la izquierda hay cuatro secciones, no solo fotos:
 - La foto grande del inicio (hero), el logo y las fotos de "¿Quién es AlemanArt?" —
   esas están fijas en `src/assets/marca/`. Si algún día quieres cambiarlas, pídemelo o
   reemplaza el archivo del mismo nombre en esa carpeta desde GitHub.
+
+## Activar las estadísticas de visitas (opcional)
+
+Sirve para saber cuánta gente entra, qué secciones miran y desde dónde llegan.
+Es gratis, no usa cookies y no recoge datos personales de los visitantes.
+
+**Forma más fácil (2 clics):**
+1. En Cloudflare, entra a tu proyecto (**Workers & Pages** → `alemanart`).
+2. Ve a la pestaña **Metrics** y pulsa **Enable** bajo *Web Analytics*.
+3. Listo. Los datos aparecen en **Web Analytics** del menú de Cloudflare, y
+   empiezan a acumularse desde ese momento (no hay datos retroactivos).
+
+**Si por algún motivo lo anterior no registra visitas**, se puede activar a mano:
+1. En Cloudflare → **Web Analytics** → agrega tu sitio; te dará un fragmento de
+   código con un `token` (una cadena larga de letras y números). Cópialo.
+2. En tu proyecto → **Settings** → **Variables and Secrets** → agrega:
+   - Nombre: `PUBLIC_CF_BEACON_TOKEN`
+   - Valor: el token que copiaste
+3. Vuelve a publicar (cualquier commit sirve) y ya queda midiendo.
+
+El sitio funciona igual de bien sin esto: si no pones el token, simplemente no se
+carga ninguna analítica.
+
+---
 
 ## Preguntas frecuentes
 

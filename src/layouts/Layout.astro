@@ -18,17 +18,24 @@ const REDES = [
   'https://www.facebook.com/share/1JTTC3ev6P/',
 ];
 
-// Datos estructurados para búsquedas locales (schema.org)
+// Analítica de Cloudflare (opcional). Se activa poniendo la variable
+// PUBLIC_CF_BEACON_TOKEN en Cloudflare → Settings → Variables.
+const TOKEN_ANALITICA = import.meta.env.PUBLIC_CF_BEACON_TOKEN ?? '';
+
+// Datos estructurados para búsquedas locales (schema.org).
+// Las URLs se derivan de `site` (astro.config.mjs), así que se actualizan solas
+// el día que haya dominio propio.
+const base = Astro.site?.origin ?? '';
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
-  '@id': 'https://alemanart.com/#negocio',
+  '@id': `${base}/#negocio`,
   name: 'AlemanArt',
   alternateName: 'Alemán Art Photography',
   description,
-  url: 'https://alemanart.com',
-  image: 'https://alemanart.com/og.jpg',
-  logo: 'https://alemanart.com/og.jpg',
+  url: base,
+  image: `${base}/og.jpg`,
+  logo: `${base}/og.jpg`,
   telephone: '+503 7587-8108',
   priceRange: '$50 - $280',
   inLanguage: 'es',
@@ -80,7 +87,7 @@ const schema = {
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="/og.jpg" />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
     <meta property="og:locale" content="es_SV" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -88,6 +95,22 @@ const schema = {
   </head>
   <body>
     <slot />
+
+    {
+      /*
+       * Analítica de Cloudflare: sin cookies, no recoge datos personales y no
+       * bloquea la carga (defer). Solo aparece si existe la variable
+       * PUBLIC_CF_BEACON_TOKEN; si no, el sitio queda sin ninguna analítica.
+       * Ver GUIA-PANEL.md para activarla.
+       */
+      TOKEN_ANALITICA && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: TOKEN_ANALITICA })}
+        />
+      )
+    }
 
     <!-- Botón flotante de WhatsApp -->
     <a

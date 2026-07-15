@@ -68,6 +68,28 @@ src/
 
 Tipografía: Playfair Display (titulares) + Inter (cuerpo), vía Google Fonts.
 
+## SEO y analítica
+
+- `sitemap-index.xml` y `sitemap-0.xml` se generan en cada build con
+  `@astrojs/sitemap` (el panel `/admin` queda excluido).
+- `src/pages/robots.txt.ts` genera el `robots.txt` con el enlace al sitemap
+  derivado de `site`, así nunca queda desactualizado.
+- La URL pública sale de `SITE_URL` (variable de entorno) con respaldo a la de
+  Workers. Se usa para el sitemap, el canonical, `og:image` y el JSON-LD: al
+  contratar un dominio propio basta definir `SITE_URL` en Cloudflare.
+- Analítica de Cloudflare (sin cookies): se activa poniendo
+  `PUBLIC_CF_BEACON_TOKEN`. Sin esa variable no se carga ningún script.
+  Los dominios del beacon ya están permitidos en la CSP, así que también
+  funciona la activación de un clic desde Cloudflare (Metrics → Enable).
+
+## Optimización de imágenes
+
+Doble red de seguridad:
+1. **Al subir** (`media_libraries.default.config.transformations` en
+   `public/admin/config.yml`): el panel convierte a WebP q90 y limita el lado
+   largo a 1800px **en el navegador**, antes de escribir al repositorio.
+2. **Al compilar**: Astro genera las variantes del `srcset` desde ese archivo.
+
 ## Seguridad
 
 El script `scripts/generar-headers.mjs` corre automáticamente tras `npm run build` y

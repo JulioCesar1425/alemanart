@@ -25,6 +25,25 @@ backend:
 media_folder: src/assets/galeria/fotos
 public_folder: /src/assets/galeria/fotos
 
+# El panel comprime y redimensiona cada foto EN TU NAVEGADOR antes de subirla,
+# así nunca entra al repositorio un archivo pesado de la cámara.
+media_libraries:
+  default:
+    config:
+      # Tope de seguridad: rechaza archivos absurdos (p. ej. un video por error).
+      max_file_size: 52428800 # 50 MB
+      # Limpia el nombre del archivo (sin acentos, espacios ni símbolos raros).
+      slugify_filename: true
+      transformations:
+        raster_image:
+          # WebP con calidad alta: el sitio vuelve a optimizar al compilar,
+          # así que aquí conviene no apretar de más y evitar pérdida doble.
+          format: webp
+          quality: 90
+          # Lado largo máximo. Suficiente para pantallas retina del sitio.
+          width: 1800
+          height: 1800
+
 collections:
   - name: galeria
     label: Fotos del sitio
@@ -59,7 +78,9 @@ collections:
       - label: Fotografía
         name: imagen
         widget: image
-        hint: 'Arrastra la foto aquí o haz clic para elegirla. Recomendado: máximo 1800px de lado largo.'
+        hint: >-
+          Arrastra la foto aquí o haz clic para elegirla. Puedes subirla tal cual
+          sale de la cámara: se comprime sola antes de subir.
 
       - label: Título
         name: titulo
